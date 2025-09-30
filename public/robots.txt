@@ -1,0 +1,11 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /admin/*
+Disallow: /dashboard/*
+
+# Host
+Host: https://getkkul.reactbd.com
+
+# Sitemaps
+Sitemap: https://getkkul.reactbd.com/sitemap.xml
