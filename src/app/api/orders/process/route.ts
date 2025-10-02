@@ -1,15 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-import { db } from "@/lib/firebase/config";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  updateDoc,
-  doc,
-  arrayUnion,
-} from "firebase/firestore";
+import { db } from "@/lib/db";
+import { users, orders } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -36,38 +29,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find user in Firestore first
-    const usersRef = collection(db, "users");
-    const q = query(usersRef, where("email", "==", email));
-    const querySnapshot = await getDocs(q);
+    // Find user in Neon DB
+    const user = await db.query.users.findFirst({
+      where: eq(users.email, email),
+    });
 
-    if (querySnapshot.empty) {
+    if (!user) {
       return NextResponse.json(
         { success: false, error: "User not found" },
         { status: 404 }
       );
     }
 
-    const userDoc = querySnapshot.docs[0];
-    const userData = userDoc.data();
-
     // Check if order already exists to prevent duplicates
-    if (userData.orders && Array.isArray(userData.orders)) {
-      const existingOrder = userData.orders.find(
-        (order: any) => order.id === sessionId
-      );
-      if (existingOrder) {
-        return NextResponse.json({
-          success: true,
-          message: "Order already processed",
-          order: {
-            id: existingOrder.orderId,
-            amount: existingOrder.amount,
-            status: existingOrder.status,
-            items: existingOrder.items?.length || 0,
-          },
-        });
-      }
+    const existingOrder = await db.query.orders.findFirst({
+      where: eq(orders.orderId, sessionId),
+    });
+
+    if (existingOrder) {
+      return NextResponse.json({
+        success: true,
+        message: "Order already processed",
+        order: {
+          id: existingOrder.orderId,
+          amount: existingOrder.amount,
+          status: existingOrder.status,
+          items: Array.isArray(existingOrder.items) ? existingOrder.items.length : 0,
+        },
+      });
     }
 
     // Extract order information with enhanced details
@@ -82,11 +71,27 @@ export async function POST(request: NextRequest) {
       console.warn("No shipping address found in session metadata");
     }
 
+    const items = session.line_items?.data?.map((item: any) => ({
+      id:
+        item.price?.product?.metadata?.productId ||
+        item.price?.product?.id ||
+        "",
+      name: item.price?.product?.name || "",
+      description: item.price?.product?.description || "",
+      images: item.price?.product?.images || [],
+      quantity: item.quantity,
+      price: item.price?.unit_amount ? item.price.unit_amount / 100 : 0,
+      total: item.amount_total ? item.amount_total / 100 : 0,
+      category: item.price?.product?.metadata?.category || "",
+      originalPrice: item.price?.product?.metadata?.originalPrice || "",
+      discountPercentage:
+        item.price?.product?.metadata?.discountPercentage || "0",
+    })) || [];
+
     const orderData = {
-      id: sessionId,
-      orderId: `ORD-${Date.now()}`,
+      orderId: sessionId,
       amount: session.amount_total
-        ? (session.amount_total / 100).toFixed(2)
+        ? (Number(session.amount_total) / 100).toString()
         : "0.00",
       currency: session.currency || "usd",
       status: "confirmed",
@@ -94,35 +99,33 @@ export async function POST(request: NextRequest) {
       paymentMethod: "card",
       customerEmail: session.customer_details?.email || email,
       customerName: session.customer_details?.name || "",
-      shippingAddress: shippingAddress,
-      billingAddress: session.customer_details?.address || null,
-      items:
-        session.line_items?.data?.map((item: any) => ({
-          id:
-            item.price?.product?.metadata?.productId ||
-            item.price?.product?.id ||
-            "",
-          name: item.price?.product?.name || "",
-          description: item.price?.product?.description || "",
-          images: item.price?.product?.images || [],
-          quantity: item.quantity,
-          price: item.price?.unit_amount ? item.price.unit_amount / 100 : 0,
-          total: item.amount_total ? item.amount_total / 100 : 0,
-          category: item.price?.product?.metadata?.category || "",
-          originalPrice: item.price?.product?.metadata?.originalPrice || "",
-          discountPercentage:
-            item.price?.product?.metadata?.discountPercentage || "0",
-        })) || [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      shippingAddress: shippingAddress ? JSON.stringify(shippingAddress) : null,
+      billingAddress: session.customer_details?.address ? JSON.stringify(session.customer_details.address) : null,
+      items: JSON.stringify(items),
+      userEmail: email,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
-    // Add order to user's orders array
-    const userDocRef = doc(db, "users", userDoc.id);
-    await updateDoc(userDocRef, {
-      orders: arrayUnion(orderData),
-      updatedAt: new Date().toISOString(),
+    // Insert order into orders table
+    await db.insert(orders).values(orderData);
+
+    // Update user's orders array in users table
+    const currentOrders = Array.isArray(user.orders) ? user.orders : [];
+    currentOrders.push({
+      ...orderData,
+      items: items, // Keep as array for user data
+      createdAt: orderData.createdAt.toISOString(),
+      updatedAt: orderData.updatedAt.toISOString(),
     });
+
+    await db
+      .update(users)
+      .set({
+        orders: JSON.stringify(currentOrders),
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, user.id));
 
     return NextResponse.json({
       success: true,
@@ -131,7 +134,7 @@ export async function POST(request: NextRequest) {
         id: orderData.orderId,
         amount: orderData.amount,
         status: orderData.status,
-        items: orderData.items.length,
+        items: items.length,
       },
     });
   } catch (error) {

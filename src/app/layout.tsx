@@ -5,7 +5,6 @@ import "./globals.css";
 import AuthProvider from "@/components/auth/AuthProvider";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import { UserSyncProvider } from "@/components/UserSyncProvider";
-import Head from "next/head";
 import PurchaseWidget from "@/components/PurchaseWidget";
 import StateProvider from "@/components/auth/StateProvider";
 

@@ -62,6 +62,7 @@ export const users = pgTable('users', {
   preferences: jsonb('preferences').default({ newsletter: false, notifications: false }),
   cart: jsonb('cart').default('[]'),
   wishlist: jsonb('wishlist').default('[]'),
+  orders: jsonb('orders').default('[]'),
 });
 
 // Orders 테이블
