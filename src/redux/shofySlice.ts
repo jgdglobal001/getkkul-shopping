@@ -1,11 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { ProductType } from "../../type";
-import { FirestoreUser } from "@/lib/firebase/userService";
+import { NeonUser } from "@/lib/firebase/userService";
 
 interface InitialState {
   cart: ProductType[];
   favorite: ProductType[];
-  userInfo: FirestoreUser | null;
+  userInfo: NeonUser | null;
 }
 
 const initialState: InitialState = {
@@ -14,8 +14,8 @@ const initialState: InitialState = {
   userInfo: null,
 };
 
-export const getkkulSlice = createSlice({
-  name: "getkkul",
+export const shofySlice = createSlice({
+  name: "shofy",
   initialState,
   reducers: {
     addToCart: (state, action) => {
@@ -91,5 +91,5 @@ export const {
   resetCart,
   addToFavorite,
   resetFavorite,
-} = getkkulSlice.actions;
-export default getkkulSlice.reducer;
+} = shofySlice.actions;
+export default shofySlice.reducer;

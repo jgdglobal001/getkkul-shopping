@@ -80,6 +80,9 @@ export const orders = pgTable('orders', {
   billingAddress: jsonb('billingAddress'),
   items: jsonb('items').default('[]').notNull(),
   userEmail: text('userEmail'),
+  statusHistory: jsonb('statusHistory').default('[]'),
+  paymentHistory: jsonb('paymentHistory').default('[]'),
+  deliveryNotes: jsonb('deliveryNotes').default('[]'),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
   updatedAt: timestamp('updatedAt').defaultNow().notNull(),
 });

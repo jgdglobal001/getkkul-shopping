@@ -27,28 +27,28 @@ export function getDefaultPageForRole(role: UserRole): string {
 }
 
 // Additional utility functions for user role checking
-import { FirestoreUser } from "@/lib/firebase/userService";
+import { NeonUser } from "@/lib/firebase/userService";
 
-export function hasRole(user: FirestoreUser | null, role: string): boolean {
+export function hasRole(user: NeonUser | null, role: string): boolean {
   return user?.role === role;
 }
 
 export function hasAnyRole(
-  user: FirestoreUser | null,
+  user: NeonUser | null,
   roles: string[]
 ): boolean {
   return user ? roles.includes(user.role) : false;
 }
 
-export function isAdminUser(user: FirestoreUser | null): boolean {
+export function isAdminUser(user: NeonUser | null): boolean {
   return hasRole(user, USER_ROLES.ADMIN);
 }
 
-export function canAccessAdminPanel(user: FirestoreUser | null): boolean {
+export function canAccessAdminPanel(user: NeonUser | null): boolean {
   return hasAnyRole(user, [USER_ROLES.ADMIN, USER_ROLES.ACCOUNT]);
 }
 
-export function canManageOrders(user: FirestoreUser | null): boolean {
+export function canManageOrders(user: NeonUser | null): boolean {
   return hasAnyRole(user, [
     USER_ROLES.ADMIN,
     USER_ROLES.ACCOUNT,
@@ -56,7 +56,7 @@ export function canManageOrders(user: FirestoreUser | null): boolean {
   ]);
 }
 
-export function canAccessDelivery(user: FirestoreUser | null): boolean {
+export function canAccessDelivery(user: NeonUser | null): boolean {
   return hasAnyRole(user, [
     USER_ROLES.ADMIN,
     USER_ROLES.DELIVERYMAN,
@@ -64,7 +64,7 @@ export function canAccessDelivery(user: FirestoreUser | null): boolean {
   ]);
 }
 
-export function getUserDisplayRole(user: FirestoreUser | null): string {
+export function getUserDisplayRole(user: NeonUser | null): string {
   if (!user) return "Guest";
 
   const roleDisplayMap: Record<string, string> = {

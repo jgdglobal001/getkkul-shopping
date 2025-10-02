@@ -1,13 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/firebase/config";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  updateDoc,
-  doc,
-} from "firebase/firestore";
+import { db } from "@/lib/db";
+import { users, orders } from "@/lib/schema";
+import { eq, and } from "drizzle-orm";
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,80 +19,59 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let userDoc;
-    let userData;
+    // Find the order by orderId
+    const order = await db.query.orders.findFirst({
+      where: eq(orders.orderId, orderId),
+    });
 
-    if (email) {
-      // Find the user by email (for existing flow)
-      const usersRef = collection(db, "users");
-      const q = query(usersRef, where("email", "==", email));
-      const snapshot = await getDocs(q);
-
-      if (snapshot.empty) {
-        return NextResponse.json({ error: "User not found" }, { status: 404 });
-      }
-
-      userDoc = snapshot.docs[0];
-      userData = userDoc.data();
-    } else {
-      // Find user by searching through all users' orders
-      const usersRef = collection(db, "users");
-      const usersSnapshot = await getDocs(usersRef);
-
-      let found = false;
-      for (const doc of usersSnapshot.docs) {
-        const data = doc.data();
-        if (data.orders && Array.isArray(data.orders)) {
-          const orderExists = data.orders.some(
-            (order: any) => order.id === orderId || order.orderId === orderId
-          );
-          if (orderExists) {
-            userDoc = doc;
-            userData = data;
-            found = true;
-            break;
-          }
-        }
-      }
-
-      if (!found) {
-        return NextResponse.json({ error: "Order not found" }, { status: 404 });
-      }
-    }
-
-    if (!userDoc || !userData) {
+    if (!order) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
-    // Find and update the specific order in the orders array
-    if (userData.orders && Array.isArray(userData.orders)) {
-      const updatedOrders = userData.orders.map((order: any) => {
-        if (order.id === orderId || order.orderId === orderId) {
-          return {
-            ...order,
-            paymentStatus: paymentStatus,
-            ...(status && { status }),
-            updatedAt: new Date().toISOString(),
-          };
-        }
-        return order;
+    // Update the order in orders table
+    await db
+      .update(orders)
+      .set({
+        paymentStatus,
+        ...(status && { status }),
+        updatedAt: new Date(),
+      })
+      .where(eq(orders.orderId, orderId));
+
+    // Update the user's orders array if email is provided
+    if (email) {
+      const user = await db.query.users.findFirst({
+        where: eq(users.email, email),
       });
 
-      // Update the user document with the modified orders array
-      await updateDoc(doc(db, "users", userDoc.id), {
-        orders: updatedOrders,
-      });
+      if (user && user.orders) {
+        const currentOrders = JSON.parse(user.orders as string);
+        const updatedOrders = currentOrders.map((order: any) => {
+          if (order.orderId === orderId) {
+            return {
+              ...order,
+              paymentStatus,
+              ...(status && { status }),
+              updatedAt: new Date().toISOString(),
+            };
+          }
+          return order;
+        });
 
-      return NextResponse.json({
-        message: "Order updated successfully",
-        success: true,
-      });
-    } else {
-      return NextResponse.json(
-        { error: "No orders found for this user" },
-        { status: 404 }
-      );
+        await db
+          .update(users)
+          .set({
+            orders: JSON.stringify(updatedOrders),
+            updatedAt: new Date(),
+          })
+          .where(eq(users.email, email));
+      }
     }
+
+    return NextResponse.json({
+      message: "Order updated successfully",
+      success: true,
+    });
   } catch (error) {
     console.error("Error updating order:", error);
     return NextResponse.json(

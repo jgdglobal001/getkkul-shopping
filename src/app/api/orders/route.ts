@@ -12,38 +12,31 @@ import {
   PaymentStatus,
   PaymentMethod,
 } from "@/lib/orderStatus";
-import { hasPermission } from "@/lib/rbac/permissions";
-import { db } from "@/lib/firebase/config";
-import {
-  collection,
-  doc,
-  getDocs,
-  getDoc,
-  updateDoc,
-  query,
-  where,
-  orderBy,
-  serverTimestamp,
-} from "firebase/firestore";
+import { hasPermission, UserRole } from "@/lib/rbac/permissions";
+import { db } from "@/lib/db";
+import { orders, users } from "@/lib/schema";
+import { eq, and, desc, inArray } from "drizzle-orm";
 import { auth } from "../../../../auth";
 
 // GET - Fetch orders based on user role
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
+    const session = await auth.api.getSession({ headers: request.headers });
 
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get user role
-    const userDoc = await getDoc(doc(db, "users", session.user.email));
-    if (!userDoc.exists()) {
+    const user = await db.query.users.findFirst({
+      where: eq(users.email, session.user.email),
+    });
+
+    if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const userData = userDoc.data();
-    const userRole = userData.role || "user";
+    const userRole = user.role as UserRole || "user";
 
     // Check if user has permission to view orders
     if (!hasPermission(userRole, "orders", "read")) {
@@ -59,36 +52,41 @@ export async function GET(request: NextRequest) {
     }
 
     // Build query based on role
-    let ordersQuery;
+    let orderList;
 
     if (userRole === "admin" || userRole === "account") {
       // Admin and accountant can see all orders
-      ordersQuery = query(
-        collection(db, "orders"),
-        orderBy("createdAt", "desc")
-      );
+      orderList = await db.query.orders.findMany({
+        orderBy: [desc(orders.createdAt)],
+      });
     } else {
       // Role-based filtering
-      ordersQuery = query(
-        collection(db, "orders"),
-        where("status", "in", visibleStatuses),
-        orderBy("createdAt", "desc")
-      );
+      orderList = await db.query.orders.findMany({
+        where: and(
+          eq(orders.userEmail, session.user.email),
+          inArray(orders.status, visibleStatuses)
+        ),
+        orderBy: [desc(orders.createdAt)],
+      });
     }
 
-    const ordersSnapshot = await getDocs(ordersQuery);
-    const orders = ordersSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-      createdAt:
-        doc.data().createdAt?.toDate?.()?.toISOString() ||
-        new Date().toISOString(),
-      updatedAt:
-        doc.data().updatedAt?.toDate?.()?.toISOString() ||
-        new Date().toISOString(),
-    }));
+    const formattedOrders = orderList.map((order) => {
+      const { id: _, ...orderWithoutId } = order;
+      return {
+        id: order.orderId,
+        ...orderWithoutId,
+        createdAt: order.createdAt.toISOString(),
+        updatedAt: order.updatedAt.toISOString(),
+        items: Array.isArray(order.items) ? order.items : JSON.parse(String(order.items)),
+        shippingAddress: order.shippingAddress ? (typeof order.shippingAddress === 'string' ? JSON.parse(order.shippingAddress) : order.shippingAddress) : null,
+        billingAddress: order.billingAddress ? (typeof order.billingAddress === 'string' ? JSON.parse(order.billingAddress) : order.billingAddress) : null,
+        statusHistory: Array.isArray(order.statusHistory) ? order.statusHistory : (typeof order.statusHistory === 'string' ? JSON.parse(order.statusHistory) : []),
+        paymentHistory: Array.isArray(order.paymentHistory) ? order.paymentHistory : (typeof order.paymentHistory === 'string' ? JSON.parse(order.paymentHistory) : []),
+        deliveryNotes: Array.isArray(order.deliveryNotes) ? order.deliveryNotes : (typeof order.deliveryNotes === 'string' ? JSON.parse(order.deliveryNotes) : []),
+      };
+    });
 
-    return NextResponse.json({ orders });
+    return NextResponse.json({ orders: formattedOrders });
   } catch (error) {
     console.error("Error fetching orders:", error);
     return NextResponse.json(
@@ -101,7 +99,7 @@ export async function GET(request: NextRequest) {
 // PUT - Update order status
 export async function PUT(request: NextRequest) {
   try {
-    const session = await auth();
+    const session = await auth.api.getSession({ headers: request.headers });
 
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -118,13 +116,15 @@ export async function PUT(request: NextRequest) {
     }
 
     // Get user role
-    const userDoc = await getDoc(doc(db, "users", session.user.email));
-    if (!userDoc.exists()) {
+    const user = await db.query.users.findFirst({
+      where: eq(users.email, session.user.email),
+    });
+
+    if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const userData = userDoc.data();
-    const userRole = userData.role || "user";
+    const userRole = user.role as UserRole || "user";
 
     // Check if user has permission to update orders
     if (!hasPermission(userRole, "orders", "update")) {
@@ -135,21 +135,20 @@ export async function PUT(request: NextRequest) {
     }
 
     // Get current order
-    const orderRef = doc(db, "orders", orderId);
-    const orderDoc = await getDoc(orderRef);
+    const currentOrder = await db.query.orders.findFirst({
+      where: eq(orders.orderId, orderId),
+    });
 
-    if (!orderDoc.exists()) {
+    if (!currentOrder) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
-    const currentOrder = orderDoc.data();
     const currentStatus = currentOrder.status as OrderStatus;
     const currentPaymentStatus = currentOrder.paymentStatus as PaymentStatus;
     const paymentMethod = currentOrder.paymentMethod as PaymentMethod;
 
     const updateData: any = {
-      updatedAt: serverTimestamp(),
-      updatedBy: session.user.email,
+      updatedAt: new Date(),
     };
 
     // Handle order status update
@@ -177,7 +176,7 @@ export async function PUT(request: NextRequest) {
       updateData.status = status;
 
       // Add status history
-      const statusHistory = currentOrder.statusHistory || [];
+      const statusHistory = Array.isArray(currentOrder.statusHistory) ? currentOrder.statusHistory : (typeof currentOrder.statusHistory === 'string' ? JSON.parse(currentOrder.statusHistory) : []);
       statusHistory.push({
         status,
         timestamp: new Date().toISOString(),
@@ -185,7 +184,7 @@ export async function PUT(request: NextRequest) {
         userRole,
         notes: deliveryNotes || `Status changed to ${status}`,
       });
-      updateData.statusHistory = statusHistory;
+      updateData.statusHistory = JSON.stringify(statusHistory);
     }
 
     // Handle payment status update
@@ -210,7 +209,7 @@ export async function PUT(request: NextRequest) {
       updateData.paymentStatus = paymentStatus;
 
       // Add payment history
-      const paymentHistory = currentOrder.paymentHistory || [];
+      const paymentHistory = Array.isArray(currentOrder.paymentHistory) ? currentOrder.paymentHistory : (typeof currentOrder.paymentHistory === 'string' ? JSON.parse(currentOrder.paymentHistory) : []);
       paymentHistory.push({
         status: paymentStatus,
         timestamp: new Date().toISOString(),
@@ -219,45 +218,63 @@ export async function PUT(request: NextRequest) {
         method: paymentMethod,
         notes: deliveryNotes || `Payment status changed to ${paymentStatus}`,
       });
-      updateData.paymentHistory = paymentHistory;
+      updateData.paymentHistory = JSON.stringify(paymentHistory);
     }
 
     // Add delivery notes if provided
     if (deliveryNotes) {
-      const notes = currentOrder.deliveryNotes || [];
+      const notes = Array.isArray(currentOrder.deliveryNotes) ? currentOrder.deliveryNotes : (typeof currentOrder.deliveryNotes === 'string' ? JSON.parse(currentOrder.deliveryNotes) : []);
       notes.push({
         note: deliveryNotes,
         timestamp: new Date().toISOString(),
         addedBy: session.user.email,
         userRole,
       });
-      updateData.deliveryNotes = notes;
+      updateData.deliveryNotes = JSON.stringify(notes);
     }
 
     // Update the order
-    await updateDoc(orderRef, updateData);
+    await db
+      .update(orders)
+      .set(updateData)
+      .where(eq(orders.orderId, orderId));
 
-    // Also update user's order subcollection if it exists
-    try {
-      if (currentOrder.userEmail) {
-        const userOrderRef = doc(
-          db,
-          "users",
-          currentOrder.userEmail,
-          "orders",
-          orderId
-        );
-        await updateDoc(userOrderRef, updateData);
+    // Also update user's order in users table if needed
+    if (currentOrder.userEmail) {
+      const userOrders = await db.query.users.findFirst({
+        where: eq(users.email, currentOrder.userEmail),
+      });
+
+      if (userOrders && userOrders.orders) {
+        const currentUserOrders = JSON.parse(String(userOrders.orders));
+        const updatedUserOrders = currentUserOrders.map((order: any) => {
+          if (order.orderId === orderId) {
+            return {
+              ...order,
+              ...updateData,
+              statusHistory: Array.isArray(updateData.statusHistory) ? updateData.statusHistory : JSON.parse(updateData.statusHistory || '[]'),
+              paymentHistory: Array.isArray(updateData.paymentHistory) ? updateData.paymentHistory : JSON.parse(updateData.paymentHistory || '[]'),
+              deliveryNotes: Array.isArray(updateData.deliveryNotes) ? updateData.deliveryNotes : JSON.parse(updateData.deliveryNotes || '[]'),
+            };
+          }
+          return order;
+        });
+
+        await db
+          .update(users)
+          .set({
+            orders: JSON.stringify(updatedUserOrders),
+            updatedAt: new Date(),
+          })
+          .where(eq(users.email, currentOrder.userEmail));
       }
-    } catch (error) {
-      console.log("User order subcollection not found, skipping update");
     }
 
     return NextResponse.json({
       success: true,
       message: "Order updated successfully",
       orderId,
-      updates: updateData,
+      updates: { ...updateData, updatedBy: session.user.email },
     });
   } catch (error) {
     console.error("Error updating order:", error);
@@ -271,7 +288,7 @@ export async function PUT(request: NextRequest) {
 // POST - Create new order (from checkout)
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
+    const session = await auth.api.getSession({ headers: request.headers });
 
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -288,9 +305,9 @@ export async function POST(request: NextRequest) {
           ? PAYMENT_STATUSES.PENDING
           : PAYMENT_STATUSES.PAID,
       userEmail: session.user.email,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-      statusHistory: [
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      statusHistory: JSON.stringify([
         {
           status: ORDER_STATUSES.PENDING,
           timestamp: new Date().toISOString(),
@@ -298,8 +315,8 @@ export async function POST(request: NextRequest) {
           userRole: "user",
           notes: "Order placed",
         },
-      ],
-      paymentHistory: [
+      ]),
+      paymentHistory: JSON.stringify([
         {
           status:
             orderData.paymentMethod === PAYMENT_METHODS.CASH
@@ -313,26 +330,40 @@ export async function POST(request: NextRequest) {
             orderData.paymentMethod || "online"
           } payment`,
         },
-      ],
+      ]),
     };
 
-    // Add to orders collection
-    const orderRef = doc(collection(db, "orders"));
-    await updateDoc(orderRef, newOrder);
+    // Add to orders table
+    const insertedOrder = await db.insert(orders).values(newOrder).returning();
 
-    // Add to user's orders subcollection
-    const userOrderRef = doc(
-      db,
-      "users",
-      session.user.email,
-      "orders",
-      orderRef.id
-    );
-    await updateDoc(userOrderRef, newOrder);
+    const orderId = insertedOrder[0].orderId;
+
+    // Add to user's orders array in users table
+    const user = await db.query.users.findFirst({
+      where: eq(users.email, session.user.email),
+    });
+
+    if (user) {
+      const currentUserOrders = user.orders ? JSON.parse(user.orders as string) : [];
+      currentUserOrders.push({
+        ...newOrder,
+        id: orderId,
+        statusHistory: JSON.parse(newOrder.statusHistory),
+        paymentHistory: JSON.parse(newOrder.paymentHistory),
+      });
+
+      await db
+        .update(users)
+        .set({
+          orders: JSON.stringify(currentUserOrders),
+          updatedAt: new Date(),
+        })
+        .where(eq(users.email, session.user.email));
+    }
 
     return NextResponse.json({
       success: true,
-      orderId: orderRef.id,
+      orderId,
       message: "Order created successfully",
     });
   } catch (error) {
