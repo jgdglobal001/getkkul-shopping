@@ -49,16 +49,6 @@ interface OrdersStats {
 function DeliveryDashboardContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
-
-  // Early return if session is loading
-  if (status === "loading") {
-    return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
-  }
-
-  // Early return if no session
-  if (!session) {
-    return <div className="flex justify-center items-center min-h-screen">Please log in</div>;
-  }
   const [orders, setOrders] = useState<Order[]>([]);
   const [stats, setStats] = useState<OrdersStats>({
     totalOrders: 0,
@@ -71,6 +61,16 @@ function DeliveryDashboardContent() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+
+  // Early return if session is loading
+  if (status === "loading") {
+    return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+  }
+
+  // Early return if no session
+  if (!session) {
+    return <div className="flex justify-center items-center min-h-screen">Please log in</div>;
+  }
 
   // Check authentication and role
   useEffect(() => {
