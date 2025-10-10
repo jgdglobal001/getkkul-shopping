@@ -1,9 +1,15 @@
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { FirestoreUser } from "@/lib/firebase/userService";
+
+interface NeonUser {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+}
 
 export function useCurrentUser(): {
-  user: FirestoreUser | null;
+  user: NeonUser | null;
   isAdmin: boolean;
   isAuthenticated: boolean;
   userId: string | null;

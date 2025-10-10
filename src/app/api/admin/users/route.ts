@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/firebase/config";
+import { db } from "@/lib/db";
+import { users } from "@/lib/schema";
+import { eq, desc } from "drizzle-orm";
 import { USER_ROLES } from "@/lib/rbac/permissions";
 import {
   collection,

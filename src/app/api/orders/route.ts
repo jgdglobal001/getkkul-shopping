@@ -13,18 +13,9 @@ import {
   PaymentMethod,
 } from "@/lib/orderStatus";
 import { hasPermission } from "@/lib/rbac/permissions";
-import { db } from "@/lib/firebase/config";
-import {
-  collection,
-  doc,
-  getDocs,
-  getDoc,
-  updateDoc,
-  query,
-  where,
-  orderBy,
-  serverTimestamp,
-} from "firebase/firestore";
+import { db } from "@/lib/db";
+import { orders, users } from "@/lib/schema";
+import { eq, desc } from "drizzle-orm";
 import { auth } from "@/auth";
 
 // GET - Fetch orders based on user role
