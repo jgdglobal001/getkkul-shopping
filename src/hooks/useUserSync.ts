@@ -1,12 +1,13 @@
 import { useEffect } from "react";
-import { authClient } from "../../lib/auth/auth-client";
+import { useSession } from "next-auth/react";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser, removeUser } from "@/redux/getkkulSlice";
 import type { RootState } from "@/redux/store";
 import type { GetkkulState } from "@/redux/getkkulSlice";
 
 export function useUserSync() {
-  const { data: session, isPending, error } = authClient.useSession();
+  const { data: session, status } = useSession();
+  const isPending = status === "loading";
   const dispatch = useDispatch();
   const userInfo = useSelector((state: any) => state.getkkul.userInfo);
 

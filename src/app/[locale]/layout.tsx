@@ -8,6 +8,7 @@ import { UserSyncProvider } from "@/components/UserSyncProvider";
 import Head from "next/head";
 import PurchaseWidget from "@/components/PurchaseWidget";
 import StateProvider from "@/components/auth/StateProvider";
+import NextAuthProvider from "@/components/auth/NextAuthProvider";
 
 export const metadata: Metadata = {
   title: "Getkkul - Multipurpose eCommerce website",
@@ -37,14 +38,16 @@ export default async function LocaleLayout({
     <html lang={locale}>
       <body>
         <NextIntlClientProvider messages={messages}>
-          <StateProvider>
-            <AuthProvider>
-              <UserSyncProvider>
-                <CurrencyProvider>{children}</CurrencyProvider>
-                <PurchaseWidget />
-              </UserSyncProvider>
-            </AuthProvider>
-          </StateProvider>
+          <NextAuthProvider>
+            <StateProvider>
+              <AuthProvider>
+                <UserSyncProvider>
+                  <CurrencyProvider>{children}</CurrencyProvider>
+                  <PurchaseWidget />
+                </UserSyncProvider>
+              </AuthProvider>
+            </StateProvider>
+          </NextAuthProvider>
         </NextIntlClientProvider>
       </body>
     </html>

@@ -2,11 +2,12 @@
 import Container from "../Container";
 import Link from "next/link";
 import { navigationKeys } from "@/constants";
-import { auth } from "../../../auth";
+import { useSession } from "next-auth/react";
 import SignOutButton from "./SignOutButton";
 import { useTranslations } from 'next-intl';
 
-const BottomHeader = ({ session }: { session: any }) => {
+const BottomHeader = () => {
+  const { data: session } = useSession();
   const t = useTranslations();
 
   return (

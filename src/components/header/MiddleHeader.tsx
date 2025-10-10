@@ -3,14 +3,15 @@ import Container from "../Container";
 import { LiaUser } from "react-icons/lia";
 import Link from "next/link";
 import SearchInput from "./SearchInput";
-import { auth } from "../../../auth";
+import { useSession } from "next-auth/react";
 import MobileNavigation from "./MobileNavigation";
 import HeaderIcons from "./HeaderIcons";
 import Logo from "../Logo";
 import UserProfileDropdown from "./UserProfileDropdown";
 import { useTranslations } from 'next-intl';
 
-const MiddleHeader = ({ session }: { session: any }) => {
+const MiddleHeader = () => {
+  const { data: session } = useSession();
   const t = useTranslations();
 
   return (

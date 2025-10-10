@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { authClient } from "@/lib/auth/auth-client";
+import { useSession } from "next-auth/react";
 import { StateType } from "../../../../../type";
 import { addToFavorite, addToCart, resetFavorite } from "@/redux/getkkulSlice";
 import Container from "@/components/Container";
@@ -15,7 +15,7 @@ import { useTranslations } from 'next-intl';
 
 const FavoritePage = () => {
   const { favorite } = useSelector((state: StateType) => state?.getkkul);
-  const { data: session } = authClient.useSession();
+  const { data: session } = useSession();
   const dispatch = useDispatch();
   const t = useTranslations();
 

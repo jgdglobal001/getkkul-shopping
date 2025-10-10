@@ -15,9 +15,9 @@ export default function RegisterPage() {
           <Logo />
         </div>
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Create Account</h1>
+          <h1 className="text-3xl font-bold text-gray-900">소셜 가입</h1>
           <p className="mt-2 text-sm text-gray-600">
-            Join Getkkul today and start shopping!
+            겟꿀에 가입하고 쇼핑을 시작하세요!
           </p>
         </div>
       </div>
