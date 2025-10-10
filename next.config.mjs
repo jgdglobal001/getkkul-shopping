@@ -49,7 +49,23 @@ const nextConfig = {
   generateEtags: false,
   // 정적 파일 생성 강제
   distDir: '.next',
+
+  // Cloudflare Pages optimization
+  poweredByHeader: false,
+  // External packages for server components (updated syntax for Next.js 15+)
+  serverExternalPackages: [],
+  // Optimize for Cloudflare Pages
+  compress: true,
+  productionBrowserSourceMaps: false,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  // 클라우드플레어 Pages용 설정
+  experimental: {
+    optimizePackageImports: ['@tosspayments/payment-widget-sdk'],
+  },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
@@ -68,20 +84,6 @@ const nextConfig = {
         hostname: "res.cloudinary.com",
       },
     ],
-  },
-  // Cloudflare Pages optimization
-  poweredByHeader: false,
-  // External packages for server components (updated syntax for Next.js 15+)
-  serverExternalPackages: [],
-  // Optimize for Cloudflare Pages
-  compress: true,
-  productionBrowserSourceMaps: false,
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  // 추가 최적화 설정
-  experimental: {
-    optimizePackageImports: ['@tosspayments/payment-widget-sdk'],
   },
   // 클라우드플레어 Pages 호환성
   generateBuildId: async () => {

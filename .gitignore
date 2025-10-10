@@ -6,6 +6,7 @@
 .next/cache/
 .next/standalone/
 .next/static/chunks/
+/.open-next/
 
 # Environment variables
 .env
