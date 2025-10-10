@@ -2,15 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { users } from "@/lib/schema";
 import { inArray } from "drizzle-orm";
-import {
-  collection,
-  doc,
-  deleteDoc,
-  getDocs,
-  query,
-  where,
-  writeBatch,
-} from "firebase/firestore";
 
 export async function DELETE(request: NextRequest) {
   try {

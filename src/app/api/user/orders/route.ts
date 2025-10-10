@@ -3,7 +3,6 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { orders } from "@/lib/schema";
 import { eq, desc } from "drizzle-orm";
-import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 
 export async function GET(request: NextRequest) {
   try {

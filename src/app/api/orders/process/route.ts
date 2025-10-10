@@ -1,30 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
 import { db } from "@/lib/db";
 import { users, orders } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
 export async function POST(request: NextRequest) {
   try {
-    const { sessionId, email } = await request.json();
+    const { paymentKey, orderId, amount, email, orderData } = await request.json();
 
-    if (!sessionId || !email) {
+    if (!paymentKey || !orderId || !amount || !email) {
       return NextResponse.json(
-        { success: false, error: "Session ID and email are required" },
+        { success: false, error: "Payment key, order ID, amount, and email are required" },
         { status: 400 }
       );
     }
 
-    // Retrieve the checkout session from Stripe
-    const session = await stripe.checkout.sessions.retrieve(sessionId, {
-      expand: ["line_items", "line_items.data.price.product"],
+    // 토스페이먼츠 결제 승인 API 호출
+    const tossResponse = await fetch("https://api.tosspayments.com/v1/payments/confirm", {
+      method: "POST",
+      headers: {
+        "Authorization": `Basic ${Buffer.from(process.env.TOSS_SECRET_KEY + ":").toString("base64")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        paymentKey,
+        orderId,
+        amount,
+      }),
     });
 
-    if (session.payment_status !== "paid") {
+    const tossPayment = await tossResponse.json();
+
+    if (!tossResponse.ok || tossPayment.status !== "DONE") {
       return NextResponse.json(
-        { success: false, error: "Payment not completed" },
+        { success: false, error: "Payment verification failed" },
         { status: 400 }
       );
     }
@@ -42,7 +50,7 @@ export async function POST(request: NextRequest) {
     const userData = userResult[0];
 
     // Check if order already exists to prevent duplicates
-    const existingOrder = await db.select().from(orders).where(eq(orders.stripeSessionId, sessionId)).limit(1);
+    const existingOrder = await db.select().from(orders).where(eq(orders.id, orderId)).limit(1);
 
     if (existingOrder.length > 0) {
       return NextResponse.json({
@@ -57,44 +65,23 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Extract order information with enhanced details
-    let shippingAddress = null;
-    if (session.metadata?.shippingAddress) {
-      try {
-        shippingAddress = JSON.parse(session.metadata.shippingAddress);
-      } catch (e) {
-        console.warn("Failed to parse shipping address from metadata:", e);
-      }
-    } else {
-      console.warn("No shipping address found in session metadata");
-    }
-
-    const orderItems = session.line_items?.data?.map((item: any) => ({
-      id: item.price?.product?.metadata?.productId || item.price?.product?.id || "",
-      name: item.price?.product?.name || "",
-      description: item.price?.product?.description || "",
-      images: item.price?.product?.images || [],
-      quantity: item.quantity,
-      price: item.price?.unit_amount ? item.price.unit_amount / 100 : 0,
-      total: item.amount_total ? item.amount_total / 100 : 0,
-      category: item.price?.product?.metadata?.category || "",
-      originalPrice: item.price?.product?.metadata?.originalPrice || "",
-      discountPercentage: item.price?.product?.metadata?.discountPercentage || "0",
-    })) || [];
+    // Extract order information from orderData
+    const shippingAddress = orderData?.shippingAddress || null;
+    const orderItems = orderData?.items || [];
 
     // Insert order into Neon DB
     const newOrder = await db.insert(orders).values({
+      id: orderId,
       userId: userData.id,
-      stripeSessionId: sessionId,
-      totalAmount: session.amount_total ? (session.amount_total / 100).toString() : "0.00",
-      currency: session.currency || "usd",
+      totalAmount: (amount / 100).toString(), // 토스페이먼츠는 원 단위로 전달됨
+      currency: "KRW",
       status: "confirmed",
-      paymentStatus: session.payment_status,
-      paymentMethod: "card",
-      customerEmail: session.customer_details?.email || email,
-      customerName: session.customer_details?.name || "",
+      paymentStatus: "paid",
+      paymentMethod: tossPayment.method || "card",
+      customerEmail: email,
+      customerName: userData.name || "",
       shippingAddress: shippingAddress ? JSON.stringify(shippingAddress) : null,
-      billingAddress: session.customer_details?.address ? JSON.stringify(session.customer_details.address) : null,
+      billingAddress: null,
       items: JSON.stringify(orderItems),
       createdAt: new Date(),
       updatedAt: new Date(),

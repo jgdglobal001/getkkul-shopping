@@ -2,14 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { users } from "@/lib/schema";
 import { eq } from "drizzle-orm";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  updateDoc,
-  doc,
-} from "firebase/firestore";
 
 export async function GET(request: NextRequest) {
   try {

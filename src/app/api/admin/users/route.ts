@@ -3,21 +3,19 @@ import { db } from "@/lib/db";
 import { users } from "@/lib/schema";
 import { eq, desc } from "drizzle-orm";
 import { USER_ROLES } from "@/lib/rbac/permissions";
-import {
-  collection,
-  getDocs,
-  doc,
-  updateDoc,
-  deleteDoc,
-} from "firebase/firestore";
 
 export async function GET(request: NextRequest) {
   try {
-    // Fetch real users from Firebase
-    const usersSnapshot = await getDocs(collection(db, "users"));
-    const users = usersSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
+    // Fetch real users from Neon DB
+    const allUsers = await db.select().from(users).orderBy(desc(users.createdAt));
+
+    const usersData = allUsers.map((user) => ({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      createdAt: user.createdAt?.toISOString(),
+      updatedAt: user.updatedAt?.toISOString(),
       role: doc.data().role || "user", // Default to user role if not set
     })) as any[];
 
