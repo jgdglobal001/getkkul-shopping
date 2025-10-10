@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminDb } from "@/lib/firebase/admin";
+import { db } from "@/lib/db";
+import { users } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 
 // This is a development utility endpoint to set admin role
-// In production, this should be secured or done through Firebase Admin Console
+// In production, this should be secured or done through proper authentication
 export async function POST(request: NextRequest) {
   try {
     const { email, secretKey } = await request.json();
@@ -17,10 +19,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Update user role to admin
-    await adminDb.collection("users").doc(email).update({
-      role: "admin",
-      updatedAt: new Date().toISOString(),
-    });
+    const result = await db.update(users)
+      .set({
+        role: "admin",
+        updatedAt: new Date(),
+      })
+      .where(eq(users.email, email))
+      .returning();
+
+    if (result.length === 0) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
 
     return NextResponse.json({
       message: `User ${email} has been promoted to admin`,

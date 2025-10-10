@@ -7,7 +7,19 @@ import { getDefaultDashboardRoute, getRoleDisplayName } from "@/lib/rbac/roles";
 import { FiAlertTriangle } from "react-icons/fi";
 
 export default function Unauthorized() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+
+  // Handle loading state
+  if (status === "loading") {
+    return (
+      <Container>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">Loading...</div>
+        </div>
+      </Container>
+    );
+  }
+
   const userRole = session?.user?.role || "user";
   const defaultRoute = getDefaultDashboardRoute(userRole);
   const roleDisplayName = getRoleDisplayName(userRole);

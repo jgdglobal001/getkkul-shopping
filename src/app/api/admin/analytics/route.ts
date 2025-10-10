@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { adminDb } from "@/lib/firebase/admin";
+import { db } from "@/lib/db";
+import { users, orders } from "@/lib/schema";
+import { eq, desc, gte, sql } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,15 +13,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Check if user is admin
-    const usersRef = adminDb.collection("users");
-    const userQuery = usersRef.where("email", "==", session.user.email);
-    const userSnapshot = await userQuery.get();
+    const userResult = await db.select().from(users).where(eq(users.email, session.user.email)).limit(1);
 
-    if (userSnapshot.empty) {
+    if (userResult.length === 0) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const userData = userSnapshot.docs[0].data();
+    const userData = userResult[0];
     if (userData.role !== "admin") {
       return NextResponse.json(
         { error: "Forbidden - Admin access required" },
