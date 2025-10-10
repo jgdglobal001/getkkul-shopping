@@ -2,6 +2,10 @@
 /node_modules
 /.next/
 /build
+/cache/
+.next/cache/
+.next/standalone/
+.next/static/chunks/
 
 # Environment variables
 .env
