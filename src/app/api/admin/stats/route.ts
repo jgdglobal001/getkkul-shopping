@@ -1,43 +1,26 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/firebase/config";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "@/lib/db";
+import { users, orders } from "@/lib/schema";
+import { count, sum, eq } from "drizzle-orm";
 
 export async function GET() {
   try {
-    // Fetch real data from Firebase
-    const [usersSnapshot, ordersSnapshot] = await Promise.all([
-      getDocs(collection(db, "users")),
-      getDocs(collection(db, "orders")),
+    // Fetch real data from Neon DB
+    const [usersCount, ordersCount, totalRevenue, pendingOrders, completedOrders] = await Promise.all([
+      db.select({ count: count() }).from(users),
+      db.select({ count: count() }).from(orders),
+      db.select({ total: sum(orders.totalAmount) }).from(orders),
+      db.select({ count: count() }).from(orders).where(eq(orders.status, "pending")),
+      db.select({ count: count() }).from(orders).where(eq(orders.status, "completed")),
     ]);
 
-    const users = usersSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    const orders = ordersSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as any[];
-
-    // Calculate real stats
-    const totalRevenue = orders.reduce(
-      (sum, order) => sum + (order.total || 0),
-      0
-    );
-    const pendingOrders = orders.filter(
-      (order) => order.status === "pending"
-    ).length;
-    const completedOrders = orders.filter(
-      (order) => order.status === "completed"
-    ).length;
-
     const stats = {
-      totalUsers: users.length,
-      totalOrders: orders.length,
-      totalRevenue: totalRevenue,
-      totalProducts: 89, // This would come from products collection if you have it
-      pendingOrders: pendingOrders,
-      completedOrders: completedOrders,
+      totalUsers: usersCount[0]?.count || 0,
+      totalOrders: ordersCount[0]?.count || 0,
+      totalRevenue: parseFloat(totalRevenue[0]?.total || "0"),
+      totalProducts: 89, // This would come from products table if you have it
+      pendingOrders: pendingOrders[0]?.count || 0,
+      completedOrders: completedOrders[0]?.count || 0,
     };
 
     return NextResponse.json(stats);
