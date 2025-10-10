@@ -15,13 +15,15 @@ export const infoNavigationKeys = [
   { key: "faqs", href: "/faqs" },
 ];
 
-export const banner = {
+// Banner data - keys for translation
+export const bannerKeys = {
   _id: 1001,
-  priceText: "Starting at $999.90",
-  title: "The best tablet Collection 2024",
-  textOne: "Exclusive offer",
+  priceTextKey: "banner.priceText",
+  titleKey: "banner.title",
+  textOneKey: "banner.textOne",
   offerPrice: "-30%",
-  textTwo: "off this week",
+  textTwoKey: "banner.textTwo",
+  buttonTextKey: "banner.buttonText",
   buttonLink: "/products",
   image: { src: bannerImageOne },
 };

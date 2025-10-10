@@ -1,8 +1,10 @@
+"use client";
 import Link from "next/link";
 import Container from "../../Container";
 import { ProductType } from "../../../../type";
 import ProductCard from "../../ProductCard";
 import Button from "../../ui/Button";
+import { useTranslations } from 'next-intl';
 
 interface Props {
   title: string;
@@ -12,6 +14,7 @@ interface Props {
 }
 
 const ProductSection = ({ title, products, viewMoreLink, subtitle }: Props) => {
+  const t = useTranslations();
   // Limit to 8 products for homepage display
   const displayProducts = products?.slice(0, 8) || [];
 
@@ -32,7 +35,7 @@ const ProductSection = ({ title, products, viewMoreLink, subtitle }: Props) => {
             size="md"
             className="transition-all duration-300"
           >
-            View More
+{t('home.viewMore')}
           </Button>
         </Link>
       </div>
@@ -46,7 +49,7 @@ const ProductSection = ({ title, products, viewMoreLink, subtitle }: Props) => {
       ) : (
         <div className="text-center py-10">
           <p className="text-gray-500 text-lg">
-            No products available at the moment.
+            {t('product.noProductsAvailable')}
           </p>
         </div>
       )}

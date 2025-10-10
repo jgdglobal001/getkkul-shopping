@@ -32,7 +32,7 @@ const TopHeader = ({
           onClick={openShippingModal}
         >
           <CiDeliveryTruck className="text-[#ffb342] text-2xl mr-1" />
-          {t('common.free')} Express Shipping On Orders ${freeShippingThreshold}+
+{t('common.free')} Express Shipping On Orders ${freeShippingThreshold}+
         </p>
         <div className="hidden md:inline-flex items-center text-sm text-white gap-1">
           <LanguageDropdown />

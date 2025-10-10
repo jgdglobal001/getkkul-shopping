@@ -1,6 +1,6 @@
 import Container from "@/components/Container";
 import EnhancedProductsSideNav from "@/components/products/EnhancedProductsSideNav";
-import { getData } from "../helpers";
+import { getData } from "../../../(user)/helpers";
 import InfiniteProductList from "@/components/products/InfiniteProductList";
 import {
   getBestSellers,
@@ -8,7 +8,7 @@ import {
   getOffers,
   searchProducts,
   getProductsByCategory,
-} from "../helpers/productHelpers";
+} from "../../../(user)/helpers/productHelpers";
 import Link from "next/link";
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
@@ -78,29 +78,50 @@ const ProductsPage = async ({ searchParams }: Props) => {
     );
   }
 
+  // Filter by color
+  if (params.color) {
+    products = products.filter((product: any) => {
+      const productColors = product.tags || [];
+      return productColors.some((color: string) =>
+        color.toLowerCase().includes(params.color!.toLowerCase())
+      );
+    });
+  }
+
   // Filter by price range
   if (params.min_price || params.max_price) {
     const minPrice = params.min_price ? parseFloat(params.min_price) : 0;
-    const maxPrice = params.max_price ? parseFloat(params.max_price) : Infinity;
+    const maxPrice = params.max_price
+      ? parseFloat(params.max_price)
+      : Number.MAX_VALUE;
+
     products = products.filter(
       (product: any) => product.price >= minPrice && product.price <= maxPrice
     );
   }
 
-  // Filter by color
-  if (params.color) {
-    products = products.filter((product: any) => {
-      const colorLower = params.color!.toLowerCase();
-      // Check in tags
-      if (product.tags && Array.isArray(product.tags)) {
-        const hasColorInTags = product.tags.some((tag: string) =>
-          tag.toLowerCase().includes(colorLower)
-        );
-        if (hasColorInTags) return true;
-      }
-      // Check in title
-      return product.title.toLowerCase().includes(colorLower);
-    });
+  // Sort products
+  if (params.sort) {
+    switch (params.sort) {
+      case "price-low":
+        products.sort((a: any, b: any) => a.price - b.price);
+        break;
+      case "price-high":
+        products.sort((a: any, b: any) => b.price - a.price);
+        break;
+      case "name-asc":
+        products.sort((a: any, b: any) => a.title.localeCompare(b.title));
+        break;
+      case "name-desc":
+        products.sort((a: any, b: any) => b.title.localeCompare(a.title));
+        break;
+      case "rating":
+        products.sort((a: any, b: any) => b.rating - a.rating);
+        break;
+      default:
+        // Keep original order
+        break;
+    }
   }
 
   // Helper function to get category key for translations
@@ -146,7 +167,7 @@ const ProductsPage = async ({ searchParams }: Props) => {
           return t('categories.specialOffers');
         default:
           const categoryKey = getCategoryKey(params.category);
-          const categoryName = t(`categories.${categoryKey}`) ||
+          const categoryName = t(`categories.${categoryKey}`) || 
             params.category.charAt(0).toUpperCase() + params.category.slice(1);
           return `${categoryName} ${t('common.products')}`;
       }

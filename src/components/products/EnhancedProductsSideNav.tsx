@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { FaFilter, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { useTranslations } from 'next-intl';
 
 import Category from "./Category";
 import Color from "./Color";
@@ -19,6 +20,7 @@ const EnhancedProductsSideNav = ({
   allProducts = [],
 }: EnhancedProductsSideNavProps) => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const t = useTranslations();
 
   return (
     <div className="w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
@@ -30,7 +32,7 @@ const EnhancedProductsSideNav = ({
         >
           <div className="flex items-center gap-2">
             <FaFilter className="w-4 h-4 text-gray-600" />
-            <h2 className="font-semibold text-gray-900">Filters</h2>
+            <h2 className="font-semibold text-gray-900">{t('filters.filters')}</h2>
           </div>
           {isFiltersOpen ? (
             <FaChevronUp className="w-4 h-4 text-gray-600" />
@@ -44,7 +46,7 @@ const EnhancedProductsSideNav = ({
       <div className="hidden lg:block bg-gray-50 px-4 py-3 border-b border-gray-200">
         <div className="flex items-center gap-2">
           <FaFilter className="w-4 h-4 text-gray-600" />
-          <h2 className="font-semibold text-gray-900">Filters</h2>
+          <h2 className="font-semibold text-gray-900">{t('filters.filters')}</h2>
         </div>
       </div>
 

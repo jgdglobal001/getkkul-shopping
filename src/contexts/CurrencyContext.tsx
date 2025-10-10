@@ -62,7 +62,7 @@ const mockExchangeRates: Record<CurrencyCode, number> = {
 export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [selectedCurrency, setSelectedCurrency] = useState<CurrencyCode>("USD");
+  const [selectedCurrency, setSelectedCurrency] = useState<CurrencyCode>("KRW");
   const [exchangeRates, setExchangeRates] =
     useState<Record<CurrencyCode, number>>(mockExchangeRates);
 

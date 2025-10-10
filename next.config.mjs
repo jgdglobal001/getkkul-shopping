@@ -7,6 +7,16 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  // HMR 관련 설정
+  webpack: (config, { dev }) => {
+    if (dev) {
+      config.watchOptions = {
+        poll: 1000,
+        aggregateTimeout: 300,
+      };
+    }
+    return config;
+  },
   // Cloudflare Pages configuration - remove static export since we have API routes
   trailingSlash: false,
   skipTrailingSlashRedirect: true,

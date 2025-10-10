@@ -3,12 +3,12 @@ import ProductSection from "@/components/pages/home/ProductSection";
 import DynamicFeaturedCategories from "@/components/pages/home/DynamicFeaturedCategories";
 import SpecialOffersBanner from "@/components/pages/home/SpecialOffersBanner";
 import SectionDivider from "@/components/ui/SectionDivider";
-import { getData } from "./helpers";
+import { getData } from "../../(user)/helpers";
 import {
   getBestSellers,
   getNewArrivals,
   getOffers,
-} from "./helpers/productHelpers";
+} from "../../(user)/helpers/productHelpers";
 import { getTranslations } from 'next-intl/server';
 
 export default async function Home() {

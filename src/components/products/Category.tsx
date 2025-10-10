@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FaChevronDown } from "react-icons/fa";
+import { useTranslations } from 'next-intl';
 
 interface CategoryProps {
   categories?: any[];
@@ -14,6 +15,7 @@ const Category = ({ categories = [], allProducts = [] }: CategoryProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentCategory = searchParams.get("category");
+  const t = useTranslations();
 
   // Helper function to get exact product count for a category
   const getProductCountForCategory = (categorySlug: string): number => {
@@ -51,9 +53,9 @@ const Category = ({ categories = [], allProducts = [] }: CategoryProps) => {
 
   // Special categories that should appear at the top
   const specialCategories = [
-    { name: "bestsellers", label: "Best Sellers" },
-    { name: "new", label: "New Arrivals" },
-    { name: "offers", label: "Special Offers" },
+    { name: "bestsellers", label: t('categories.bestSellers') },
+    { name: "new", label: t('categories.newArrivals') },
+    { name: "offers", label: t('categories.specialOffers') },
   ];
 
   const handleCategoryClick = (categorySlug: string) => {
@@ -72,7 +74,7 @@ const Category = ({ categories = [], allProducts = [] }: CategoryProps) => {
         className="w-full flex items-center justify-between py-3 px-0 text-left focus:outline-none group"
       >
         <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-          Shop by Category
+          {t('filters.shopByCategory')}
         </h3>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
@@ -122,6 +124,41 @@ const Category = ({ categories = [], allProducts = [] }: CategoryProps) => {
                 {categories.map((category, index) => {
                   const isActive = currentCategory === category.slug;
                   const count = getProductCountForCategory(category.slug);
+
+                  // Helper function to get category key for translations
+                  const getCategoryKey = (slug: string): string => {
+                    const keyMap: { [key: string]: string } = {
+                      'beauty': 'beauty',
+                      'fragrances': 'fragrances',
+                      'furniture': 'furniture',
+                      'groceries': 'groceries',
+                      'home-decoration': 'homeDecoration',
+                      'kitchen-accessories': 'kitchenAccessories',
+                      'laptops': 'laptops',
+                      'mens-shirts': 'mensShirts',
+                      'mens-shoes': 'mensShoes',
+                      'mens-watches': 'mensWatches',
+                      'mobile-accessories': 'mobileAccessories',
+                      'motorcycle': 'motorcycle',
+                      'skin-care': 'skincare',
+                      'smartphones': 'smartphones',
+                      'sports-accessories': 'sportsAccessories',
+                      'sunglasses': 'sunglasses',
+                      'tablets': 'tablets',
+                      'tops': 'tops',
+                      'vehicle': 'vehicle',
+                      'womens-bags': 'womensBags',
+                      'womens-dresses': 'womensDresses',
+                      'womens-jewellery': 'womensJewellery',
+                      'womens-shoes': 'womensShoes',
+                      'womens-watches': 'womensWatches',
+                    };
+                    return keyMap[slug] || slug;
+                  };
+
+                  const categoryKey = getCategoryKey(category.slug);
+                  const categoryName = t(`categories.${categoryKey}`) || category.name;
+
                   return (
                     <div key={index} className="flex items-center">
                       <input
@@ -136,7 +173,7 @@ const Category = ({ categories = [], allProducts = [] }: CategoryProps) => {
                         onClick={() => handleCategoryClick(category.slug)}
                         className="ml-2 text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors flex-1 text-left"
                       >
-                        {category.name} ({count})
+                        {categoryName} ({count})
                       </button>
                     </div>
                   );

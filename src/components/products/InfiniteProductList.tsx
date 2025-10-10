@@ -5,6 +5,7 @@ import EnhancedProductCard from "../EnhancedProductCard";
 import ActiveFilters from "./ActiveFilters";
 import { BsGridFill } from "react-icons/bs";
 import { ImList } from "react-icons/im";
+import { useTranslations } from 'next-intl';
 
 interface InfiniteProductListProps {
   products: any[];
@@ -25,6 +26,7 @@ const InfiniteProductList = ({
   const observer = useRef<IntersectionObserver | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations();
 
   // Reset when products change
   useEffect(() => {
@@ -106,12 +108,12 @@ const InfiniteProductList = ({
   const sortedProducts = sortProducts(displayedProducts);
 
   const sortOptions = [
-    { value: "default", label: "Default" },
-    { value: "price-low", label: "Price: Low to High" },
-    { value: "price-high", label: "Price: High to Low" },
-    { value: "name-asc", label: "Name: A to Z" },
-    { value: "name-desc", label: "Name: Z to A" },
-    { value: "rating", label: "Highest Rated" },
+    { value: "default", label: t('filters.default') },
+    { value: "price-low", label: t('filters.priceLowToHigh') },
+    { value: "price-high", label: t('filters.priceHighToLow') },
+    { value: "name-asc", label: "이름: A-Z" },
+    { value: "name-desc", label: "이름: Z-A" },
+    { value: "rating", label: t('filters.rating') },
   ];
 
   return (
@@ -122,7 +124,7 @@ const InfiniteProductList = ({
       {/* Header with controls */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 p-4 bg-white border border-gray-200 rounded-lg">
         <div className="text-sm text-gray-600">
-          Showing {sortedProducts.length} of {products.length} products
+          {t('filters.showing')} {sortedProducts.length} {t('filters.of')} {products.length} {t('filters.products')}
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
@@ -132,7 +134,7 @@ const InfiniteProductList = ({
               htmlFor="sort"
               className="text-sm text-gray-600 whitespace-nowrap"
             >
-              Sort by:
+              {t('filters.sortBy')}:
             </label>
             <select
               id="sort"
@@ -201,14 +203,14 @@ const InfiniteProductList = ({
       {isLoading && (
         <div className="flex justify-center items-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-          <span className="ml-2 text-gray-600">Loading more products...</span>
+          <span className="ml-2 text-gray-600">{t('common.loading')}</span>
         </div>
       )}
 
       {/* No more products message */}
       {!hasMore && products.length > itemsPerPage && (
         <div className="text-center py-8 text-gray-500">
-          You&apos;ve reached the end of the products list.
+          모든 상품을 확인하셨습니다.
         </div>
       )}
 
@@ -216,7 +218,7 @@ const InfiniteProductList = ({
       {products.length === 0 && (
         <div className="text-center py-12">
           <p className="text-gray-500 text-lg">
-            No products found matching your criteria.
+            {t('product.noProductsAvailable')}
           </p>
         </div>
       )}

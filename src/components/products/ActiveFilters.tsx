@@ -1,10 +1,12 @@
 "use client";
 import { useSearchParams, useRouter } from "next/navigation";
 import { FaTimes, FaUndo } from "react-icons/fa";
+import { useTranslations } from 'next-intl';
 
 const ActiveFilters = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const t = useTranslations();
 
   const activeFilters = [];
 
@@ -16,26 +18,62 @@ const ActiveFilters = () => {
   const maxPrice = searchParams.get("max_price");
   const search = searchParams.get("search");
 
+  // Helper function to get category key for translations
+  const getCategoryKey = (slug: string): string => {
+    const keyMap: { [key: string]: string } = {
+      'beauty': 'beauty',
+      'fragrances': 'fragrances',
+      'furniture': 'furniture',
+      'groceries': 'groceries',
+      'home-decoration': 'homeDecoration',
+      'kitchen-accessories': 'kitchenAccessories',
+      'laptops': 'laptops',
+      'mens-shirts': 'mensShirts',
+      'mens-shoes': 'mensShoes',
+      'mens-watches': 'mensWatches',
+      'mobile-accessories': 'mobileAccessories',
+      'motorcycle': 'motorcycle',
+      'skin-care': 'skincare',
+      'smartphones': 'smartphones',
+      'sports-accessories': 'sportsAccessories',
+      'sunglasses': 'sunglasses',
+      'tablets': 'tablets',
+      'tops': 'tops',
+      'vehicle': 'vehicle',
+      'womens-bags': 'womensBags',
+      'womens-dresses': 'womensDresses',
+      'womens-jewellery': 'womensJewellery',
+      'womens-shoes': 'womensShoes',
+      'womens-watches': 'womensWatches',
+    };
+    return keyMap[slug] || slug;
+  };
+
   if (category) {
+    let displayValue;
+    if (category === "bestsellers") {
+      displayValue = t('categories.bestSellers');
+    } else if (category === "new") {
+      displayValue = t('categories.newArrivals');
+    } else if (category === "offers") {
+      displayValue = t('categories.specialOffers');
+    } else {
+      const categoryKey = getCategoryKey(category);
+      displayValue = t(`categories.${categoryKey}`) || category.charAt(0).toUpperCase() + category.slice(1);
+    }
+
     activeFilters.push({
       type: "category",
-      label: "Category",
+      label: t('common.categories'),
       value: category,
-      displayValue:
-        category === "bestsellers"
-          ? "Best Sellers"
-          : category === "new"
-          ? "New Arrivals"
-          : category === "offers"
-          ? "Special Offers"
-          : category.charAt(0).toUpperCase() + category.slice(1),
+      displayValue: displayValue,
     });
   }
 
   if (brand) {
     activeFilters.push({
       type: "brand",
-      label: "Brand",
+      label: t('product.brand'),
       value: brand,
       displayValue: brand,
     });
@@ -44,7 +82,7 @@ const ActiveFilters = () => {
   if (color) {
     activeFilters.push({
       type: "color",
-      label: "Color",
+      label: t('product.color'),
       value: color,
       displayValue: color,
     });
@@ -53,7 +91,7 @@ const ActiveFilters = () => {
   if (minPrice || maxPrice) {
     activeFilters.push({
       type: "price",
-      label: "Price",
+      label: t('common.price'),
       value: `${minPrice || 0}-${maxPrice || "∞"}`,
       displayValue: `$${minPrice || 0} - $${maxPrice || "∞"}`,
     });
@@ -62,7 +100,7 @@ const ActiveFilters = () => {
   if (search) {
     activeFilters.push({
       type: "search",
-      label: "Search",
+      label: t('common.search'),
       value: search,
       displayValue: `"${search}"`,
     });
@@ -104,13 +142,13 @@ const ActiveFilters = () => {
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-medium text-gray-900">Active Filters</h3>
+        <h3 className="text-sm font-medium text-gray-900">{t('filters.activeFilters')}</h3>
         <button
           onClick={clearAllFilters}
           className="flex items-center gap-2 text-sm text-red-600 hover:text-red-700 transition-colors"
         >
           <FaUndo className="w-3 h-3" />
-          Clear All
+          {t('filters.clearAll')}
         </button>
       </div>
 

@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { FiArrowRight, FiPackage } from "react-icons/fi";
+import { useTranslations } from 'next-intl';
 
 interface Category {
   slug: string;
@@ -65,48 +66,57 @@ const categoryImages: { [key: string]: string } = {
     "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop",
 };
 
-// Category descriptions
-const categoryDescriptions: { [key: string]: string } = {
-  beauty: "Explore premium beauty products and cosmetics",
-  fragrances: "Discover luxurious fragrances and perfumes",
-  furniture: "Transform your space with stylish furniture",
-  groceries: "Fresh groceries and everyday essentials",
-  "home-decoration": "Beautiful decor items for your home",
-  "kitchen-accessories": "Essential tools for your kitchen",
-  laptops: "High-performance laptops and computers",
-  "mens-shirts": "Stylish shirts for the modern man",
-  "mens-shoes": "Comfortable and fashionable footwear",
-  "mens-watches": "Elegant timepieces for men",
-  "mobile-accessories": "Accessories for your mobile devices",
-  motorcycle: "Motorcycle gear and accessories",
-  "skin-care": "Premium skincare products",
-  smartphones: "Latest smartphones and devices",
-  "sports-accessories": "Gear up for your favorite sports",
-  sunglasses: "Stylish eyewear and sunglasses",
-  tablets: "Tablets and digital accessories",
-  tops: "Trendy tops and casual wear",
-  vehicle: "Automotive accessories and parts",
-  "womens-bags": "Fashionable bags and handbags",
-  "womens-dresses": "Elegant dresses for every occasion",
-  "womens-jewellery": "Beautiful jewelry and accessories",
-  "womens-shoes": "Stylish footwear for women",
-  "womens-watches": "Elegant watches for women",
+// Helper function to get category key for translations
+const getCategoryKey = (slug: string): string => {
+  const keyMap: { [key: string]: string } = {
+    'beauty': 'beauty',
+    'fragrances': 'fragrances',
+    'furniture': 'furniture',
+    'groceries': 'groceries',
+    'home-decoration': 'homeDecoration',
+    'kitchen-accessories': 'kitchenAccessories',
+    'laptops': 'laptops',
+    'mens-shirts': 'mensShirts',
+    'mens-shoes': 'mensShoes',
+    'mens-watches': 'mensWatches',
+    'mobile-accessories': 'mobileAccessories',
+    'motorcycle': 'motorcycle',
+    'skin-care': 'skincare',
+    'smartphones': 'smartphones',
+    'sports-accessories': 'sportsAccessories',
+    'sunglasses': 'sunglasses',
+    'tablets': 'tablets',
+    'tops': 'tops',
+    'vehicle': 'vehicle',
+    'womens-bags': 'womensBags',
+    'womens-dresses': 'womensDresses',
+    'womens-jewellery': 'womensJewellery',
+    'womens-shoes': 'womensShoes',
+    'womens-watches': 'womensWatches',
+  };
+  return keyMap[slug] || slug;
 };
 
 const CategoryCard: React.FC<{ category: Category; index: number }> = ({
   category,
   index,
 }) => {
-  const categoryName = category.name
+  const t = useTranslations();
+  const categorySlug = category.slug;
+  const categoryKey = getCategoryKey(categorySlug);
+
+  // Get translated category name and description
+  const categoryName = t(`categories.${categoryKey}`) || category.name
     .replace(/([A-Z])/g, " $1")
     .replace(/^./, (str) => str.toUpperCase());
-  const categorySlug = category.slug;
+
   const image =
     categoryImages[categorySlug] ||
     "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop";
-  const description =
-    categoryDescriptions[categorySlug] ||
+
+  const description = t(`categoryDescriptions.${categoryKey}`) ||
     "Discover amazing products in this category";
+
   const productCount = category.count || 0;
 
   return (
@@ -125,7 +135,7 @@ const CategoryCard: React.FC<{ category: Category; index: number }> = ({
 
           {/* Product Count Badge */}
           <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full">
-            {productCount} items
+            {productCount} {t('filters.products')}
           </div>
 
           {/* Category Icon */}
@@ -146,7 +156,7 @@ const CategoryCard: React.FC<{ category: Category; index: number }> = ({
           {/* Action Button */}
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-gray-500">
-              View Products
+              {t('common.view')} {t('common.products')}
             </span>
             <div className="flex items-center text-blue-600 group-hover:text-blue-700 transition-colors duration-200">
               <FiArrowRight className="w-3 h-3 lg:w-4 lg:h-4 transform group-hover:translate-x-1 transition-transform duration-200" />
@@ -165,6 +175,7 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
   categories,
   totalProducts = 0,
 }) => {
+  const t = useTranslations();
   // Take only first 12 categories
   const displayCategories = categories?.slice(0, 12) || [];
   const totalBrands = Math.floor(totalProducts / 20); // Estimate brands based on products
@@ -178,19 +189,19 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
             <div className="text-3xl font-bold text-blue-600">
               {displayCategories.length}
             </div>
-            <div className="text-gray-600">Categories</div>
+            <div className="text-gray-600">{t('common.categories')}</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-green-600">
               {totalProducts}+
             </div>
-            <div className="text-gray-600">Products</div>
+            <div className="text-gray-600">{t('common.products')}</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-purple-600">
               {totalBrands}+
             </div>
-            <div className="text-gray-600">Brands</div>
+            <div className="text-gray-600">{t('product.brands')}</div>
           </div>
         </div>
       </div>
@@ -205,24 +216,23 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
       {/* Call to Action */}
       <div className="text-center mt-12 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8">
         <h3 className="text-2xl font-bold text-gray-900 mb-2">
-          Can&apos;t find what you&apos;re looking for?
+          찾고 계신 상품이 없나요?
         </h3>
         <p className="text-gray-600 mb-6">
-          Browse all our products or use our search feature to find exactly what
-          you need.
+          모든 상품을 둘러보거나 검색 기능을 사용해서 원하는 상품을 찾아보세요.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/products"
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
           >
-            View All Products
+            모든 상품 보기
           </Link>
           <Link
             href="/products?search="
             className="bg-white hover:bg-gray-50 text-gray-700 px-6 py-3 rounded-lg font-medium border border-gray-300 transition-colors duration-200"
           >
-            Search Products
+            상품 검색
           </Link>
         </div>
       </div>
