@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "../../../../../auth";
+import { auth } from "@/auth";
 import { db } from "@/lib/firebase/config";
 import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 

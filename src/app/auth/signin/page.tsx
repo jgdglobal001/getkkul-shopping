@@ -4,8 +4,8 @@ import { signIn, getProviders } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Container from "@/components/Container";
 import Logo from "@/components/Logo";
-import { FaKakao } from "react-icons/fa";
-import { SiNaver, SiGoogle } from "react-icons/si";
+// import { FaKakao } from "react-icons/fa";
+// import { SiNaver, SiGoogle } from "react-icons/si";
 
 interface Provider {
   id: string;
@@ -29,11 +29,11 @@ export default function SignIn() {
   const getProviderIcon = (providerId: string) => {
     switch (providerId) {
       case "kakao":
-        return <FaKakao className="text-xl" />;
+        return <span className="text-xl font-bold">K</span>;
       case "naver":
-        return <SiNaver className="text-xl" />;
+        return <span className="text-xl font-bold">N</span>;
       case "google":
-        return <SiGoogle className="text-xl" />;
+        return <span className="text-xl font-bold">G</span>;
       default:
         return null;
     }

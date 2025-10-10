@@ -25,7 +25,7 @@ import {
   orderBy,
   serverTimestamp,
 } from "firebase/firestore";
-import { auth } from "../../../../auth";
+import { auth } from "@/auth";
 
 // GET - Fetch orders based on user role
 export async function GET(request: NextRequest) {
