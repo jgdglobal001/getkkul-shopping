@@ -1,5 +1,8 @@
 # Redirects for Cloudflare Pages
 
+# API routes - 가장 먼저 처리
+/api/* /api/:splat 200
+
 # Admin redirects
 /admin /admin-dashboard 301
 /admin/* /admin-dashboard/:splat 301
@@ -20,5 +23,13 @@
 /packer-dashboard/ /packer-dashboard 301
 /delivery-dashboard/ /delivery-dashboard 301
 
-# Fallback for SPA routing
+# Next.js App Router 라우팅
+/ko/* /ko/:splat 200
+/en/* /en/:splat 200
+/zh/* /zh/:splat 200
+
+# 루트 경로 처리
+/ /ko 302
+
+# Fallback for SPA routing - 가장 마지막에 위치
 /* /index.html 200

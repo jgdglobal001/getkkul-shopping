@@ -42,9 +42,13 @@ const nextConfig = {
 
     return config;
   },
-  // Cloudflare Pages configuration - remove static export since we have API routes
+  // Cloudflare Pages configuration
   trailingSlash: false,
   skipTrailingSlashRedirect: true,
+  // 클라우드플레어 Pages용 설정
+  generateEtags: false,
+  // 정적 파일 생성 강제
+  distDir: '.next',
   images: {
     remotePatterns: [
       {
@@ -78,6 +82,10 @@ const nextConfig = {
   // 추가 최적화 설정
   experimental: {
     optimizePackageImports: ['@tosspayments/payment-widget-sdk'],
+  },
+  // 클라우드플레어 Pages 호환성
+  generateBuildId: async () => {
+    return 'build-' + Date.now()
   },
 };
 
