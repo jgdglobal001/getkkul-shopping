@@ -10,8 +10,8 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Cloudflare Pages에 최적화된 설정
-  output: 'standalone',
+  // Cloudflare Pages 정적 배포 설정
+  output: 'export',
   trailingSlash: false,
   skipTrailingSlashRedirect: true,
   generateEtags: false,

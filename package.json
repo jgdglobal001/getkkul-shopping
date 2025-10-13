@@ -5,12 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:open-next": "npx open-next@latest build",
     "start": "next start",
     "lint": "next lint",
     "postbuild": "next-sitemap",
     "deploy:check": "./deploy-check.sh",
-    "deploy:cf": "wrangler pages deploy .next --project-name=getkkul-commerce --compatibility-date=2024-08-20",
+    "deploy:cf": "wrangler pages deploy out --project-name=getkkul-commerce --compatibility-date=2024-08-20",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
