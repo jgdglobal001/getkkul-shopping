@@ -13,24 +13,8 @@ import Link from "next/link";
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
-interface Props {
-  searchParams: Promise<{
-    category?: string;
-    search?: string;
-    brand?: string;
-    minPrice?: string;
-    maxPrice?: string;
-    min_price?: string;
-    max_price?: string;
-    color?: string;
-    sort?: string;
-    page?: string;
-  }>;
-}
-
-const ProductsPage = async ({ searchParams }: Props) => {
-  // Await searchParams for Next.js 15 compatibility
-  const params = await searchParams;
+const ProductsPage = async () => {
+  // 정적 빌드를 위해 searchParams 제거
   const t = await getTranslations();
 
   // Fetch all products and categories
@@ -47,82 +31,7 @@ const ProductsPage = async ({ searchParams }: Props) => {
     ...new Set(allProducts.map((product: any) => product.brand)),
   ].sort();
 
-  // Apply filters
-  if (params.category) {
-    switch (params.category) {
-      case "bestsellers":
-        products = getBestSellers(products);
-        break;
-      case "new":
-        products = getNewArrivals(products);
-        break;
-      case "offers":
-        products = getOffers(products);
-        break;
-      default:
-        products = getProductsByCategory(products, params.category);
-    }
-  }
-
-  // Filter by search term
-  if (params.search) {
-    products = searchProducts(products, params.search);
-  }
-
-  // Filter by brand
-  if (params.brand) {
-    products = products.filter(
-      (product: any) =>
-        product.brand &&
-        product.brand.toLowerCase().includes(params.brand!.toLowerCase())
-    );
-  }
-
-  // Filter by color
-  if (params.color) {
-    products = products.filter((product: any) => {
-      const productColors = product.tags || [];
-      return productColors.some((color: string) =>
-        color.toLowerCase().includes(params.color!.toLowerCase())
-      );
-    });
-  }
-
-  // Filter by price range
-  if (params.min_price || params.max_price) {
-    const minPrice = params.min_price ? parseFloat(params.min_price) : 0;
-    const maxPrice = params.max_price
-      ? parseFloat(params.max_price)
-      : Number.MAX_VALUE;
-
-    products = products.filter(
-      (product: any) => product.price >= minPrice && product.price <= maxPrice
-    );
-  }
-
-  // Sort products
-  if (params.sort) {
-    switch (params.sort) {
-      case "price-low":
-        products.sort((a: any, b: any) => a.price - b.price);
-        break;
-      case "price-high":
-        products.sort((a: any, b: any) => b.price - a.price);
-        break;
-      case "name-asc":
-        products.sort((a: any, b: any) => a.title.localeCompare(b.title));
-        break;
-      case "name-desc":
-        products.sort((a: any, b: any) => b.title.localeCompare(a.title));
-        break;
-      case "rating":
-        products.sort((a: any, b: any) => b.rating - a.rating);
-        break;
-      default:
-        // Keep original order
-        break;
-    }
-  }
+  // 정적 빌드를 위해 필터링 제거 - 모든 제품 표시
 
   // Helper function to get category key for translations
   const getCategoryKey = (slug: string): string => {
@@ -230,7 +139,7 @@ const ProductsPage = async ({ searchParams }: Props) => {
         <div className="flex-1 min-w-0">
           <InfiniteProductList
             products={products}
-            currentSort={params.sort || "default"}
+            currentSort="default"
           />
         </div>
       </div>
