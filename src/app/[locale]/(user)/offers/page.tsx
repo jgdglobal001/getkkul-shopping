@@ -33,15 +33,6 @@ const OffersPage = async () => {
     (a: ProductType, b: ProductType) =>
       b.discountPercentage - a.discountPercentage
   );
-        break;
-    }
-  } else {
-    // Default sorting by highest discount
-    products.sort(
-      (a: ProductType, b: ProductType) =>
-        b.discountPercentage - a.discountPercentage
-    );
-  }
 
   // Get categories for filtering
   const categories = [
