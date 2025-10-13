@@ -38,13 +38,27 @@ export async function generateStaticParams() {
 
 const SingleProductPage = async ({ params }: Props) => {
   const { id } = await params;
-  const endpoint = `https://dummyjson.com/products/${id}`;
-  const product: ProductType = await getData(endpoint);
 
-  // Fetch related products for the same category
-  const allProductsEndpoint = "https://dummyjson.com/products?limit=0";
-  const allProductsData = await getData(allProductsEndpoint);
-  const allProducts: ProductType[] = allProductsData.products || [];
+  try {
+    const endpoint = `https://dummyjson.com/products/${id}`;
+    const product: ProductType = await getData(endpoint);
+
+    // 제품이 없는 경우 처리
+    if (!product || !product.id) {
+      return (
+        <Container className="py-10">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">제품을 찾을 수 없습니다</h1>
+            <p className="text-gray-600">요청하신 제품이 존재하지 않습니다.</p>
+          </div>
+        </Container>
+      );
+    }
+
+    // Fetch related products for the same category
+    const allProductsEndpoint = "https://dummyjson.com/products?limit=0";
+    const allProductsData = await getData(allProductsEndpoint);
+    const allProducts: ProductType[] = allProductsData?.products || [];
 
   const regularPrice = product?.price;
   const discountedPrice = product?.price + product?.discountPercentage / 100;
@@ -190,6 +204,18 @@ const SingleProductPage = async ({ params }: Props) => {
       </Container>
     </div>
   );
+  } catch (error) {
+    console.error('Error loading product:', error);
+    return (
+      <Container className="py-10">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">오류가 발생했습니다</h1>
+          <p className="text-gray-600">제품을 불러오는 중 오류가 발생했습니다.</p>
+          <p className="text-sm text-gray-500 mt-2">제품 ID: {id}</p>
+        </div>
+      </Container>
+    );
+  }
 };
 
 export default SingleProductPage;
