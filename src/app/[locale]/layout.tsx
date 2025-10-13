@@ -20,6 +20,15 @@ export const metadata: Metadata = {
   },
 };
 
+// 정적 빌드를 위한 generateStaticParams 함수
+export function generateStaticParams() {
+  return [
+    { locale: 'en' },
+    { locale: 'ko' },
+    { locale: 'zh' }
+  ];
+}
+
 export default async function LocaleLayout({
   children,
   params

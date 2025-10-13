@@ -19,6 +19,24 @@ interface Props {
   }>;
 }
 
+// 정적 빌드를 위한 generateStaticParams 함수
+export async function generateStaticParams() {
+  try {
+    // 모든 제품 ID를 가져와서 정적 페이지 생성
+    const endpoint = "https://dummyjson.com/products?limit=100";
+    const data = await getData(endpoint);
+    const products: ProductType[] = data.products || [];
+
+    return products.map((product) => ({
+      id: product.id.toString(),
+    }));
+  } catch (error) {
+    console.error('Error generating static params:', error);
+    // 오류 발생 시 빈 배열 반환
+    return [];
+  }
+}
+
 const SingleProductPage = async ({ params }: Props) => {
   const { id } = await params;
   const t = await getTranslations();
