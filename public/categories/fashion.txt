@@ -1,0 +1,11 @@
+Fashion Category
+mens-shirts
+mens-shoes
+mens-watches
+womens-dresses
+womens-shoes
+womens-watches
+womens-bags
+womens-jewellery
+tops
+sunglasses
