@@ -19,6 +19,13 @@ const nextConfig = {
   compress: true,
   productionBrowserSourceMaps: false,
 
+  // 캐시 최적화
+  webpack: (config, { isServer }) => {
+    // 캐시 비활성화
+    config.cache = false;
+    return config;
+  },
+
   // 실험적 기능 최소화
   experimental: {
     optimizePackageImports: ['@tosspayments/payment-widget-sdk'],

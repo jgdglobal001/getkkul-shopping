@@ -1,0 +1,30 @@
+# Cloudflare Pages ignore file
+# 큰 파일들과 불필요한 파일들 제외
+
+# Webpack 캐시 (매우 큼)
+.next/cache/
+cache/
+**/cache/**
+**/*.pack
+
+# 개발 파일들
+node_modules/
+.git/
+.env*
+*.log
+
+# 빌드 아티팩트
+.next/standalone/
+.next/static/chunks/webpack/
+.open-next/
+
+# IDE 파일들
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 기타 큰 파일들
+*.zip
+*.tar.gz
+*.tgz

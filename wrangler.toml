@@ -4,6 +4,16 @@ compatibility_date = "2024-08-20"
 # Pages 설정 - 루트 레벨에 위치해야 함
 pages_build_output_dir = ".next"
 
+# 업로드에서 제외할 파일들
+[build]
+command = ""
+
+# 큰 파일들 제외
+[[rules]]
+type = "Text"
+globs = ["**/*.pack", "**/cache/**", "**/webpack/**"]
+compressed = true
+
 # 환경 변수 (실제 값은 Cloudflare 대시보드에서 설정)
 [vars]
 NODE_ENV = "production"
