@@ -6,20 +6,26 @@ import GoogleProvider from "next-auth/providers/google";
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     // 카카오 (첫 번째)
-    KakaoProvider({
-      clientId: process.env.KAKAO_CLIENT_ID!,
-      clientSecret: process.env.KAKAO_CLIENT_SECRET!,
-    }),
+    ...(process.env.KAKAO_CLIENT_ID && process.env.KAKAO_CLIENT_SECRET ? [
+      KakaoProvider({
+        clientId: process.env.KAKAO_CLIENT_ID,
+        clientSecret: process.env.KAKAO_CLIENT_SECRET,
+      })
+    ] : []),
     // 네이버 (두 번째)
-    NaverProvider({
-      clientId: process.env.NAVER_CLIENT_ID!,
-      clientSecret: process.env.NAVER_CLIENT_SECRET!,
-    }),
+    ...(process.env.NAVER_CLIENT_ID && process.env.NAVER_CLIENT_SECRET ? [
+      NaverProvider({
+        clientId: process.env.NAVER_CLIENT_ID,
+        clientSecret: process.env.NAVER_CLIENT_SECRET,
+      })
+    ] : []),
     // 구글 (세 번째)
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET ? [
+      GoogleProvider({
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      })
+    ] : []),
   ],
   pages: {
     signIn: "/auth/signin",
