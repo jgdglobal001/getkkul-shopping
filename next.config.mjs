@@ -19,10 +19,35 @@ const nextConfig = {
   compress: true,
   productionBrowserSourceMaps: false,
 
-  // 캐시 최적화
+  // 캐시 및 파일 크기 최적화
   webpack: (config, { isServer }) => {
-    // 캐시 비활성화
+    // 캐시 비활성화 (파일 크기 문제 해결)
     config.cache = false;
+
+    // 큰 파일들 제외
+    config.resolve.alias = {
+      ...config.resolve.alias,
+    };
+
+    // 최적화 설정
+    config.optimization = {
+      ...config.optimization,
+      splitChunks: {
+        chunks: 'all',
+        cacheGroups: {
+          default: false,
+          vendors: false,
+          // 작은 청크로 분할
+          vendor: {
+            name: 'vendor',
+            chunks: 'all',
+            test: /node_modules/,
+            maxSize: 1000000, // 1MB
+          },
+        },
+      },
+    };
+
     return config;
   },
 
