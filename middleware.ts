@@ -1,0 +1,110 @@
+import createNextIntlMiddleware from 'next-intl/middleware';
+import { NextResponse } from "next/server";
+import { auth } from "./auth";
+import { checkRouteAccess } from "@/lib/rbac/middleware";
+import { UserRole, getDefaultDashboardRoute } from "@/lib/rbac/roles";
+
+const nextIntlMiddleware = createNextIntlMiddleware({
+  // A list of all locales that are supported
+  locales: ['ko', 'en', 'zh'],
+
+  // Used when no locale matches
+  defaultLocale: 'ko'
+});
+
+export const config = {
+  // Match only internationalized pathnames
+  matcher: [
+    // Match all pathnames except for
+    // - … if they start with `/api`, `/_next` or `/_vercel`
+    // - … the ones containing a dot (e.g. `favicon.ico`)
+    '/((?!api|_next|_vercel|.*\\..*).*)',
+    // However, match all pathnames within `/users`, optionally with a locale prefix
+    '/([\\w-]+)?/users/(.+)'
+  ],
+};
+
+const protectedRoutes = [
+  "/account",
+  "/checkout",
+  "/success",
+  "/admin",
+  "/delivery-dashboard",
+  "/packer-dashboard",
+  "/account-dashboard",
+  "/user-dashboard",
+  "/dashboard",
+];
+const authRoutes = ["/auth/signin", "/auth/register"];
+
+export default async function middleware(request: any) {
+  // Step 1: Handle internationalization
+  const response = nextIntlMiddleware(request);
+
+  const { pathname } = request.nextUrl;
+  const session = await auth();
+
+  // Extract locale from pathname
+  const pathnameIsMissingLocale = ['ko', 'en', 'zh'].every(
+    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
+  );
+
+  // Step 2: Restrict protected routes to logged-in users
+  // Remove locale prefix for route checking
+  const pathWithoutLocale = pathname.replace(/^\/(ko|en|zh)/, '') || '/';
+
+  if (protectedRoutes.some((route) => pathWithoutLocale.startsWith(route))) {
+    if (!session?.user) {
+      return NextResponse.redirect(new URL("/auth/signin", request.url));
+    }
+
+    // Check role-based access
+    const userRole = session.user.role as UserRole;
+
+    // Special explicit check for admin routes
+    if (pathWithoutLocale.startsWith("/account/admin")) {
+      if (userRole !== "admin") {
+        return NextResponse.redirect(new URL("/account", request.url));
+      }
+    }
+
+    if (!checkRouteAccess(pathWithoutLocale, userRole)) {
+      // Special case: redirect non-admin users trying to access /account/admin to /account
+      if (pathWithoutLocale.startsWith("/account/admin") && userRole !== "admin") {
+        return NextResponse.redirect(new URL("/account", request.url));
+      }
+
+      return NextResponse.redirect(new URL("/unauthorized", request.url));
+    }
+  }
+
+  // Step 3: Prevent access to auth pages for logged-in users
+  if (authRoutes.some((route) => pathWithoutLocale.startsWith(route))) {
+    if (session?.user) {
+      const userRole = session.user.role as UserRole;
+      const dashboardRoute = getDefaultDashboardRoute(userRole);
+      return NextResponse.redirect(new URL(dashboardRoute, request.url));
+    }
+  }
+
+  // Step 4: Handle success page - ensure user is logged in and has session_id
+  if (pathWithoutLocale.startsWith("/success")) {
+    if (!session?.user) {
+      return NextResponse.redirect(new URL("/auth/signin", request.url));
+    }
+
+    const sessionId = request.nextUrl.searchParams.get("session_id");
+    if (!sessionId) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+  }
+
+  // Step 5: Handle checkout page - ensure user is logged in
+  if (pathWithoutLocale.startsWith("/checkout")) {
+    if (!session?.user) {
+      return NextResponse.redirect(new URL("/auth/signin", request.url));
+    }
+  }
+
+  return response;
+}
