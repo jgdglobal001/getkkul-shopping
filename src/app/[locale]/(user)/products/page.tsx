@@ -64,26 +64,8 @@ const ProductsPage = async () => {
     return keyMap[slug] || slug;
   };
 
-  // Get the page title based on category
+  // Get the page title - 정적 빌드용
   const getPageTitle = () => {
-    if (params.category) {
-      switch (params.category) {
-        case "bestsellers":
-          return t('categories.bestSellers');
-        case "new":
-          return t('categories.newArrivals');
-        case "offers":
-          return t('categories.specialOffers');
-        default:
-          const categoryKey = getCategoryKey(params.category);
-          const categoryName = t(`categories.${categoryKey}`) || 
-            params.category.charAt(0).toUpperCase() + params.category.slice(1);
-          return `${categoryName} ${t('common.products')}`;
-      }
-    }
-    if (params.search) {
-      return `"${params.search}" ${t('common.search')} 결과`;
-    }
     return t('categories.allCategories') + ' ' + t('common.products');
   };
 
@@ -95,9 +77,7 @@ const ProductsPage = async () => {
           {getPageTitle()}
         </h1>
         <p className="text-gray-600 text-lg">
-          {params.category || params.search
-            ? `${products.length}${t('filters.found')}`
-            : `총 ${products.length}개의 상품을 만나보세요`}
+          총 {products.length}개의 상품을 만나보세요
         </p>
 
         {/* Breadcrumb */}
@@ -114,12 +94,6 @@ const ProductsPage = async () => {
                 {t('common.products')}
               </Link>
             </li>
-            {params.category && (
-              <>
-                <li>/</li>
-                <li className="text-gray-900 font-medium">{getPageTitle()}</li>
-              </>
-            )}
           </ol>
         </nav>
       </div>
