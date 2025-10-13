@@ -193,8 +193,9 @@ const SingleProductPage = async ({ params }: Props) => {
       {/* Related Products */}
       <Container className="pb-16">
         <RelatedProducts
-          allProducts={allProducts}
-          currentProduct={product}
+          products={allProducts}
+          currentProductId={product?.id}
+          category={product?.category}
         />
       </Container>
     </div>

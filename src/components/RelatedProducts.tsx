@@ -12,11 +12,23 @@ const RelatedProducts = ({
   currentProductId,
   category,
 }: RelatedProductsProps) => {
+  // 안전장치: products가 배열인지 확인
+  if (!products || !Array.isArray(products) || products.length === 0) {
+    return null;
+  }
+
+  // 안전장치: category와 currentProductId가 유효한지 확인
+  if (!category || !currentProductId) {
+    return null;
+  }
+
   // Filter products by same category and exclude current product
   const relatedProducts = products
     .filter(
       (product) =>
-        product.category === category && product.id !== currentProductId
+        product &&
+        product.category === category &&
+        product.id !== currentProductId
     )
     .slice(0, 4); // Show only 4 related products
 
