@@ -1,3 +1,15 @@
+// 정적 빌드를 위한 generateStaticParams 함수
+export function generateStaticParams() {
+  // 임시로 몇 개의 주문 ID 생성
+  return [
+    { id: '1' },
+    { id: '2' },
+    { id: '3' },
+    { id: '4' },
+    { id: '5' }
+  ];
+}
+
 "use client";
 
 import { useEffect, useState } from "react";
