@@ -11,7 +11,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   // Cloudflare Pages에 최적화된 설정
-  output: 'standalone',
+  output: 'export',
   trailingSlash: false,
   skipTrailingSlashRedirect: true,
   generateEtags: false,
