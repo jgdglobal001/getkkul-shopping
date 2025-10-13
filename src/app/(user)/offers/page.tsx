@@ -11,17 +11,9 @@ export const metadata = {
     "Discover amazing deals and special offers on our best products. Save big on electronics, fashion, beauty, and more!",
 };
 
-interface OffersPageProps {
-  searchParams: Promise<{
-    sort?: string;
-    category?: string;
-    min_discount?: string;
-  }>;
-}
-
-const OffersPage = async ({ searchParams }: OffersPageProps) => {
-  // Await searchParams for Next.js 15 compatibility
-  const params = await searchParams;
+const OffersPage = async () => {
+  // 정적 빌드를 위해 searchParams 제거
+  // 기본값으로 모든 할인 상품 표시
 
   // Fetch all products
   const productsData = await getData(`https://dummyjson.com/products?limit=0`);
@@ -32,70 +24,14 @@ const OffersPage = async ({ searchParams }: OffersPageProps) => {
     (product: ProductType) => product.discountPercentage > 0
   );
 
-  // Apply additional filters
-  if (params.category) {
-    products = offersProducts.filter(
-      (product: ProductType) =>
-        product.category.toLowerCase() === params.category!.toLowerCase()
-    );
-  } else {
-    products = offersProducts;
-  }
+  // 정적 빌드를 위해 기본 필터링만 적용
+  products = offersProducts;
 
-  // Filter by minimum discount percentage
-  if (params.min_discount) {
-    const minDiscount = parseFloat(params.min_discount);
-    products = products.filter(
-      (product: ProductType) => product.discountPercentage >= minDiscount
-    );
-  }
-
-  // Sort products
-  if (params.sort) {
-    switch (params.sort) {
-      case "discount-high":
-        products.sort(
-          (a: ProductType, b: ProductType) =>
-            b.discountPercentage - a.discountPercentage
-        );
-        break;
-      case "discount-low":
-        products.sort(
-          (a: ProductType, b: ProductType) =>
-            a.discountPercentage - b.discountPercentage
-        );
-        break;
-      case "price-low":
-        products.sort((a: ProductType, b: ProductType) => a.price - b.price);
-        break;
-      case "price-high":
-        products.sort((a: ProductType, b: ProductType) => b.price - a.price);
-        break;
-      case "name-asc":
-        products.sort((a: ProductType, b: ProductType) =>
-          a.title.localeCompare(b.title)
-        );
-        break;
-      case "rating":
-        products.sort(
-          (a: ProductType, b: ProductType) => (b.rating || 0) - (a.rating || 0)
-        );
-        break;
-      default:
-        // Default: highest discount first
-        products.sort(
-          (a: ProductType, b: ProductType) =>
-            b.discountPercentage - a.discountPercentage
-        );
-        break;
-    }
-  } else {
-    // Default sorting by highest discount
-    products.sort(
-      (a: ProductType, b: ProductType) =>
-        b.discountPercentage - a.discountPercentage
-    );
-  }
+  // 정적 빌드를 위해 기본 정렬 적용 (할인율 높은 순)
+  products.sort(
+    (a: ProductType, b: ProductType) =>
+      b.discountPercentage - a.discountPercentage
+  );
 
   // Get categories for filtering
   const categories = [
@@ -151,9 +87,9 @@ const OffersPage = async ({ searchParams }: OffersPageProps) => {
       <OffersList
         products={products}
         categories={categories}
-        currentSort={params.sort || "discount-high"}
-        currentCategory={params.category}
-        currentMinDiscount={params.min_discount}
+        currentSort="discount-high"
+        currentCategory={undefined}
+        currentMinDiscount={undefined}
       />
     </Container>
   );
