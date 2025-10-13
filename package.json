@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && npx open-next@latest build",
+    "build": "next build",
+    "build:open-next": "npx open-next@latest build",
     "start": "next start",
     "lint": "next lint",
     "postbuild": "next-sitemap",
