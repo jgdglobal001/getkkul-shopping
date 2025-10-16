@@ -9,16 +9,17 @@ import Image from "next/image";
 import { GoDotFill } from "react-icons/go";
 import { BsEnvelopeAt } from "react-icons/bs";
 import { GrLocation } from "react-icons/gr";
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 const Footer = () => {
   const t = useTranslations();
+  const locale = useLocale();
 
   return (
     <div className="bg-light-bg py-10 lg:py-20">
       <Container className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         <div className="flex flex-col items-start gap-y-5">
-          <Link href={"/"}>
+          <Link href={`/${locale}`}>
             <Image src={logo} alt="logo" width={224} height={80} />
           </Link>
           <p>
@@ -32,7 +33,7 @@ const Footer = () => {
             {infoNavigationKeys?.map((item: any) => (
               <Link
                 key={item?.key}
-                href={item?.href}
+                href={`/${locale}${item?.href}`}
                 className="flex items-center gap-x-2 text-gray-700 hover:text-theme-color duration-200 font-medium"
               >
                 <GoDotFill size={10} />
@@ -47,7 +48,7 @@ const Footer = () => {
             {infoNavigationKeys?.map((item: any) => (
               <Link
                 key={item?.key}
-                href={item?.href}
+                href={`/${locale}${item?.href}`}
                 className="flex items-center gap-x-2 text-gray-700 hover:text-theme-color duration-200 font-medium"
               >
                 <GoDotFill size={10} />
@@ -100,10 +101,10 @@ const Footer = () => {
             {t('footer.copyright')}
           </p>
           <div className="flex gap-4 text-sm text-gray-600">
-            <Link href="/privacy" className="hover:text-theme-color">
+            <Link href={`/${locale}/privacy`} className="hover:text-theme-color">
               {t('footer.privacy')}
             </Link>
-            <Link href="/terms" className="hover:text-theme-color">
+            <Link href={`/${locale}/terms`} className="hover:text-theme-color">
               {t('footer.terms')}
             </Link>
           </div>

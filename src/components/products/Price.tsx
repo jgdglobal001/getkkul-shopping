@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaChevronDown } from "react-icons/fa";
+import { useTranslations, useLocale } from 'next-intl';
 
 interface PriceProps {
   allProducts?: any[];
@@ -14,6 +15,8 @@ const Price = ({ allProducts = [] }: PriceProps) => {
   const searchParams = useSearchParams();
   const currentMinPrice = searchParams.get("min_price");
   const currentMaxPrice = searchParams.get("max_price");
+  const t = useTranslations();
+  const locale = useLocale();
 
   const handlePriceClick = (minPrice: number, maxPrice: number) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
@@ -21,7 +24,7 @@ const Price = ({ allProducts = [] }: PriceProps) => {
     current.set("max_price", maxPrice.toString());
     const search = current.toString();
     const query = search ? `?${search}` : "";
-    router.push(`/products${query}`);
+    router.push(`/${locale}/products${query}`);
   };
 
   // Generate dynamic price ranges based on product data
@@ -56,7 +59,7 @@ const Price = ({ allProducts = [] }: PriceProps) => {
         className="w-full flex items-center justify-between py-3 px-0 text-left focus:outline-none group"
       >
         <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-          Shop by Price
+          {t('filters.shopByPrice')}
         </h3>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}

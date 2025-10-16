@@ -4,18 +4,19 @@ import Link from "next/link";
 import { navigationKeys } from "@/constants";
 import { useSession } from "next-auth/react";
 import SignOutButton from "./SignOutButton";
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 const BottomHeader = () => {
   const { data: session } = useSession();
   const t = useTranslations();
+  const locale = useLocale();
 
   return (
     <div className="border-b border-b-gray-400">
       <Container className="flex items-center justify-between py-1">
         <div className="text-xs md:text-sm font-medium flex items-center gap-5">
           {navigationKeys?.map((item) => (
-            <Link key={item?.key} href={item?.href}>
+            <Link key={item?.key} href={`/${locale}${item?.href}`}>
               {t(`common.${item?.key}`)}
             </Link>
           ))}

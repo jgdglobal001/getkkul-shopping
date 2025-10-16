@@ -31,5 +31,15 @@
 # 루트 경로 처리
 / /ko 302
 
+# Non-localized to default locale (ko)
+/products /ko/products 302
+/categories /ko/categories 302
+/offers /ko/offers 302
+/favorite /ko/favorite 302
+/cart /ko/cart 302
+/account /ko/account 302
+/account/* /ko/account/:splat 302
+/auth/* /ko/auth/:splat 302
+
 # Fallback for SPA routing - 가장 마지막에 위치
 /* /index.html 200

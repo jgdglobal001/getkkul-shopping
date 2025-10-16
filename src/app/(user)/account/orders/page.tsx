@@ -1,12 +1,8 @@
-import OrdersList from "@/components/account/OrdersList";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import { redirect } from 'next/navigation';
+import { getLocale } from 'next-intl/server';
 
-export default function OrdersPage() {
-  return (
-    <ProtectedRoute loadingMessage="Loading your orders...">
-      <div>
-        <OrdersList showHeader={true} />
-      </div>
-    </ProtectedRoute>
-  );
+export default async function OrdersPage() {
+  const locale = await getLocale();
+  redirect(`/${locale}/account/orders`);
+  return null;
 }

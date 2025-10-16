@@ -3,6 +3,7 @@
 import React, { useState, useRef } from "react";
 import Link from "next/link";
 import { FiArrowRight, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { useTranslations, useLocale } from 'next-intl';
 
 interface FeaturedCategory {
   name: string;
@@ -209,15 +210,17 @@ const FeaturedCategories: React.FC = () => {
     }
   };
 
+  const t = useTranslations();
+  const locale = useLocale();
   return (
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Shop by Category
+            {t('home.shopByCategory')}
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Discover our curated collections across different categories
+            {t('home.categoryDescription')}
           </p>
         </div>
 
@@ -320,7 +323,7 @@ const FeaturedCategories: React.FC = () => {
 
         <div className="text-center">
           <Link
-            href="/categories"
+            href={`/${locale}/categories`}
             className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
           >
             View All Categories

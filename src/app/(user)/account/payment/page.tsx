@@ -1,5 +1,8 @@
-import PaymentClient from "@/components/account/PaymentClient";
+import { redirect } from 'next/navigation';
+import { getLocale } from 'next-intl/server';
 
-export default function PaymentPage() {
-  return <PaymentClient />;
+export default async function PaymentPage() {
+  const locale = await getLocale();
+  redirect(`/${locale}/account/payment`);
+  return null;
 }

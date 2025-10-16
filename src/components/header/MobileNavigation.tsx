@@ -5,18 +5,21 @@ import { Dialog, DialogPanel } from "@headlessui/react";
 import Link from "next/link";
 import SocialLinks from "./SocialLinks";
 import { MdClose } from "react-icons/md";
+import { useLocale, useTranslations } from 'next-intl';
 
 const navigation = [
-  { title: "Home", href: "/" },
-  { title: "Products", href: "/products" },
-  { title: "Offers", href: "/offers" },
-  { title: "Cart", href: "/cart" },
-  { title: "Orders", href: "/order" },
+  { key: "home", href: "/" },
+  { key: "products", href: "/products" },
+  { key: "offers", href: "/offers" },
+  { key: "cart", href: "/cart" },
+  { key: "orders", href: "/order" },
 ];
 
 const MobileNavigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const locale = useLocale();
+  const t = useTranslations();
 
   useEffect(() => {
     setIsClient(true);
@@ -59,12 +62,12 @@ const MobileNavigation = () => {
               {navigation?.map((item) => (
                 <Link
                   onClick={() => setIsOpen(false)}
-                  key={item?.title}
-                  href={item?.href}
+                  key={item?.key}
+                  href={`/${locale}${item?.href}`}
                   className="hover:text-sky-color relative group flex items-center gap-2 cursor-pointer"
                 >
                   <span className="w-2.5 h-2.5 rounded-full border border-white/80 inline-flex group-hover:border-sky-color" />{" "}
-                  {item?.title}
+                  {t(`common.${item?.key}`)}
                   <span className="absolute w-full h-px bg-white/20 left-0 -bottom-1 group-hover:bg-sky-color duration-300" />
                 </Link>
               ))}

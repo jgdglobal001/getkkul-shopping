@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { FiArrowRight } from "react-icons/fi";
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface FeaturedCategory {
   name: string;
@@ -48,6 +48,7 @@ const featuredCategories: FeaturedCategory[] = [
 
 const FeaturedCategories: React.FC = () => {
   const t = useTranslations();
+  const locale = useLocale();
 
   return (
     <section className="py-16 bg-gray-50">
@@ -65,7 +66,7 @@ const FeaturedCategories: React.FC = () => {
           {featuredCategories.map((category, index) => (
             <Link
               key={category.slug}
-              href={`/products?category=${category.slug}`}
+              href={`/${locale}/products?category=${category.slug}`}
             >
               <div className="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
                 <div className="relative h-48 overflow-hidden">
@@ -100,7 +101,7 @@ const FeaturedCategories: React.FC = () => {
 
         <div className="text-center">
           <Link
-            href="/categories"
+            href={`/${locale}/categories`}
             className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
           >
             {t('home.viewAllCategories')}

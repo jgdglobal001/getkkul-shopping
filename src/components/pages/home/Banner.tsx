@@ -2,10 +2,11 @@ import Container from "@/components/Container";
 import Button from "@/components/ui/Button";
 import { bannerKeys } from "@/constants";
 import { GoArrowRight } from "react-icons/go";
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, getLocale } from 'next-intl/server';
 
 const Banner = async () => {
   const t = await getTranslations();
+  const locale = await getLocale();
 
   return (
     <div className="bg-[#115061] py-20 text-theme-white">
@@ -19,7 +20,7 @@ const Banner = async () => {
             {t(bannerKeys.textTwoKey)}
           </p>
           <Button
-            href={bannerKeys.buttonLink}
+            href={`/${locale}${bannerKeys.buttonLink}`}
             className="flex items-center gap-1 bg-theme-white text-black rounded-md w-32 px-0 justify-center text-sm font-semibold hover:bg-transparent hover:text-theme-white py-3 border border-transparent hover:border-white/40 duration-200"
           >
             {t(bannerKeys.buttonTextKey)} <GoArrowRight className="text-lg" />

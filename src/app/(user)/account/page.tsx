@@ -1,10 +1,8 @@
-import AccountClient from "@/components/account/AccountClient";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import { redirect } from 'next/navigation';
+import { getLocale } from 'next-intl/server';
 
-export default function AccountPage() {
-  return (
-    <ProtectedRoute loadingMessage="Loading your account...">
-      <AccountClient />
-    </ProtectedRoute>
-  );
+export default async function AccountPage() {
+  const locale = await getLocale();
+  redirect(`/${locale}/account`);
+  return null;
 }

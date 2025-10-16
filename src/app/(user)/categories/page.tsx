@@ -32,6 +32,9 @@ export const metadata: Metadata = {
   },
 };
 
+import { redirect } from 'next/navigation';
+import { getLocale } from 'next-intl/server';
+
 export default async function CategoriesPage() {
   // Fetch categories and all products data
   const [categoriesData, allProductsData] = await Promise.all([
@@ -52,6 +55,8 @@ export default async function CategoriesPage() {
         categoriesWithCounts.find((c) => c.slug === category.slug)?.count || 0,
     })) || [];
 
+  const locale = await getLocale();
+  redirect(`/${locale}/categories`);
   return (
     <Container className="py-10">
       {/* Page Header */}

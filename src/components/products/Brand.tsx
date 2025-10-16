@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FaChevronDown } from "react-icons/fa";
+import { useTranslations, useLocale } from 'next-intl';
 
 interface BrandProps {
   brands?: string[];
@@ -13,13 +14,15 @@ const Brand = ({ brands = [] }: BrandProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentBrand = searchParams.get("brand");
+  const t = useTranslations();
+  const locale = useLocale();
 
   const handleBrandClick = (brand: string) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
     current.set("brand", brand);
     const search = current.toString();
     const query = search ? `?${search}` : "";
-    router.push(`/products${query}`);
+    router.push(`/${locale}/products${query}`);
   };
 
   return (
@@ -30,7 +33,7 @@ const Brand = ({ brands = [] }: BrandProps) => {
         className="w-full flex items-center justify-between py-3 px-0 text-left focus:outline-none group"
       >
         <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-          Shop by Brand
+          {t('filters.shopByBrand')}
         </h3>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FaChevronDown } from "react-icons/fa";
+import { useTranslations, useLocale } from 'next-intl';
 
 interface ColorProps {
   allProducts?: any[];
@@ -13,13 +14,15 @@ const Color = ({ allProducts = [] }: ColorProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentColor = searchParams.get("color");
+  const t = useTranslations();
+  const locale = useLocale();
 
   const handleColorClick = (color: string) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
     current.set("color", color);
     const search = current.toString();
     const query = search ? `?${search}` : "";
-    router.push(`/products${query}`);
+    router.push(`/${locale}/products${query}`);
   };
 
   // Extract unique colors from products
@@ -78,7 +81,7 @@ const Color = ({ allProducts = [] }: ColorProps) => {
         className="w-full flex items-center justify-between py-3 px-0 text-left focus:outline-none group"
       >
         <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-          Shop by Color
+          {t('filters.shopByColor')}
         </h3>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
@@ -127,7 +130,7 @@ const Color = ({ allProducts = [] }: ColorProps) => {
                 })}
                 {colors.length === 0 && (
                   <div className="text-gray-400 italic text-sm">
-                    No colors available
+                    {t('filters.noColorsAvailable')}
                   </div>
                 )}
               </div>

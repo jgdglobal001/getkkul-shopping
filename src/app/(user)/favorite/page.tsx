@@ -1,18 +1,10 @@
-"use client";
+import { redirect } from 'next/navigation';
+import { getLocale } from 'next-intl/server';
 
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useSession } from "next-auth/react";
-import { StateType } from "../../../../type";
-import { addToFavorite, addToCart, resetFavorite } from "@/redux/getkkulSlice";
-import Container from "@/components/Container";
-import Link from "next/link";
-import { FaHeart, FaShoppingCart, FaEye, FaTrash } from "react-icons/fa";
-import { MdFavoriteBorder, MdFavorite } from "react-icons/md";
-import toast from "react-hot-toast";
-import PriceFormat from "@/components/PriceFormat";
-
-const FavoritePage = () => {
+const FavoritePage = async () => {
+  const locale = await getLocale();
+  redirect(`/${locale}/favorite`);
+  return null;
   const { favorite } = useSelector((state: StateType) => state?.getkkul);
   const { data: session } = useSession();
   const dispatch = useDispatch();

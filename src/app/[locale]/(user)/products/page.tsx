@@ -11,11 +11,12 @@ import {
 } from "../../../(user)/helpers/productHelpers";
 import Link from "next/link";
 import { useTranslations } from 'next-intl';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, getLocale } from 'next-intl/server';
 
 const ProductsPage = async () => {
   // 정적 빌드를 위해 searchParams 제거
   const t = await getTranslations();
+  const locale = await getLocale();
 
   // Fetch all products and categories
   const [productsData, categoriesData] = await Promise.all([
@@ -77,20 +78,20 @@ const ProductsPage = async () => {
           {getPageTitle()}
         </h1>
         <p className="text-gray-600 text-lg">
-          총 {products.length}개의 상품을 만나보세요
+          {products.length} {t('common.products')}
         </p>
 
         {/* Breadcrumb */}
         <nav className="mt-4 text-sm">
           <ol className="flex items-center space-x-2 text-gray-500">
             <li>
-              <Link href="/" className="hover:text-gray-700">
+              <Link href={`/${locale}/`} className="hover:text-gray-700">
                 {t('common.home')}
               </Link>
             </li>
             <li>/</li>
             <li>
-              <Link href="/products" className="hover:text-gray-700">
+              <Link href={`/${locale}/products`} className="hover:text-gray-700">
                 {t('common.products')}
               </Link>
             </li>

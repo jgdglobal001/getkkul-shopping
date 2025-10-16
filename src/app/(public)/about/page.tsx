@@ -2,6 +2,7 @@ import Container from "@/components/Container";
 import Title from "@/components/Title";
 import Link from "next/link";
 import { Metadata } from "next";
+import { getLocale } from 'next-intl/server';
 
 export const metadata: Metadata = {
   title: "About Us - Shofy",
@@ -9,7 +10,8 @@ export const metadata: Metadata = {
     "Learn more about Shofy - Your trusted multipurpose eCommerce platform",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const locale = await getLocale();
   return (
     <Container className="py-10 lg:py-20">
       <div className="max-w-4xl mx-auto">
@@ -144,7 +146,7 @@ export default function AboutPage() {
               difference today.
             </p>
             <Link
-              href="/products"
+              href={`/${locale}/products`}
               className="inline-block bg-theme-color text-theme-white px-6 py-3 rounded-lg hover:bg-theme-color/90 transition-colors duration-200 font-medium"
             >
               Browse Products

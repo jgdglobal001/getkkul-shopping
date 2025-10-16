@@ -11,6 +11,9 @@ export const metadata = {
     "Discover amazing deals and special offers on our best products. Save big on electronics, fashion, beauty, and more!",
 };
 
+import { redirect } from 'next/navigation';
+import { getLocale } from 'next-intl/server';
+
 const OffersPage = async () => {
   // 정적 빌드를 위해 searchParams 제거
   // 기본값으로 모든 할인 상품 표시
@@ -50,6 +53,8 @@ const OffersPage = async () => {
     ...offersProducts.map((p: ProductType) => p.discountPercentage)
   );
 
+  const locale = await getLocale();
+  redirect(`/${locale}/offers`);
   return (
     <Container className="py-10">
       {/* Page Header */}

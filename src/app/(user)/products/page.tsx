@@ -13,7 +13,12 @@ import Link from "next/link";
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
+import { redirect } from 'next/navigation';
+import { getLocale } from 'next-intl/server';
+
 const ProductsPage = async () => {
+  const locale = await getLocale();
+  redirect(`/${locale}/products`);
   // 정적 빌드를 위해 searchParams 제거
   const t = await getTranslations();
 

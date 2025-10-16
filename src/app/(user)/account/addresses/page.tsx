@@ -1,5 +1,8 @@
-import AddressesClient from "@/components/account/AddressesClient";
+import { redirect } from 'next/navigation';
+import { getLocale } from 'next-intl/server';
 
-export default function AddressesPage() {
-  return <AddressesClient />;
+export default async function AddressesPage() {
+  const locale = await getLocale();
+  redirect(`/${locale}/account/addresses`);
+  return null;
 }

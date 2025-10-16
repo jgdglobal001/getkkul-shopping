@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useSession } from "next-auth/react";
@@ -11,13 +13,14 @@ import { FaHeart, FaShoppingCart, FaEye, FaTrash } from "react-icons/fa";
 import { MdFavoriteBorder, MdFavorite } from "react-icons/md";
 import toast from "react-hot-toast";
 import PriceFormat from "@/components/PriceFormat";
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 const FavoritePage = () => {
   const { favorite } = useSelector((state: StateType) => state?.getkkul);
   const { data: session } = useSession();
   const dispatch = useDispatch();
   const t = useTranslations();
+  const locale = useLocale();
 
   const handleRemoveFromFavorite = (productId: number) => {
     const product = favorite.find((item) => item.id === productId);
@@ -52,7 +55,7 @@ const FavoritePage = () => {
               즐겨찾기를 보려면 먼저 로그인해주세요.
             </p>
             <Link
-              href="/auth/signin"
+              href={`/${locale}/auth/signin`}
               className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
             >
               로그인하기
@@ -76,7 +79,7 @@ const FavoritePage = () => {
               마음에 드는 상품을 즐겨찾기에 추가해보세요.
             </p>
             <Link
-              href="/products"
+              href={`/${locale}/products`}
               className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
             >
               상품 둘러보기
@@ -99,7 +102,7 @@ const FavoritePage = () => {
             {favorite.length}개의 상품이 즐겨찾기에 있습니다
           </p>
         </div>
-        
+
         {favorite.length > 0 && (
           <button
             onClick={handleClearAllFavorites}
@@ -115,7 +118,7 @@ const FavoritePage = () => {
       <nav className="mb-8 text-sm">
         <ol className="flex items-center space-x-2 text-gray-500">
           <li>
-            <Link href="/" className="hover:text-gray-700">
+            <Link href={`/${locale}/`} className="hover:text-gray-700">
               {t('common.home')}
             </Link>
           </li>
@@ -133,14 +136,14 @@ const FavoritePage = () => {
           >
             {/* Product Image */}
             <div className="relative group">
-              <Link href={`/products/${product.id}`}>
+              <Link href={`/${locale}/products/${product.id}`}>
                 <img
                   src={product.thumbnail}
                   alt={product.title}
                   className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </Link>
-              
+
               {/* Remove from favorites button */}
               <button
                 onClick={() => handleRemoveFromFavorite(product.id)}
@@ -160,12 +163,12 @@ const FavoritePage = () => {
 
             {/* Product Info */}
             <div className="p-4">
-              <Link href={`/products/${product.id}`}>
+              <Link href={`/${locale}/products/${product.id}`}>
                 <h3 className="font-medium text-gray-900 mb-2 line-clamp-2 hover:text-blue-600 transition-colors">
                   {product.title}
                 </h3>
               </Link>
-              
+
               <p className="text-sm text-gray-500 mb-2 capitalize">
                 {t(`categories.${product.category}`) || product.category}
               </p>
@@ -176,8 +179,8 @@ const FavoritePage = () => {
                   <PriceFormat amount={product.price} />
                   {product.discountPercentage > 0 && (
                     <span className="text-sm text-gray-500 line-through">
-                      <PriceFormat 
-                        amount={product.price / (1 - product.discountPercentage / 100)} 
+                      <PriceFormat
+                        amount={product.price / (1 - product.discountPercentage / 100)}
                       />
                     </span>
                   )}
@@ -193,9 +196,9 @@ const FavoritePage = () => {
                   <FaShoppingCart className="mr-2" />
                   장바구니
                 </button>
-                
+
                 <Link
-                  href={`/products/${product.id}`}
+                  href={`/${locale}/products/${product.id}`}
                   className="p-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
                   title="상품 보기"
                 >

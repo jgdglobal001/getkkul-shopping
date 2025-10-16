@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { FiArrowRight, FiPackage } from "react-icons/fi";
+import { useTranslations, useLocale } from 'next-intl';
 
 interface Category {
   slug: string;
@@ -111,20 +112,53 @@ const categoryDescriptions: { [key: string]: string } = {
   "womens-watches": "Elegant watches for women",
 };
 
+// Helper function to map API slug to translation key
+const getCategoryKey = (slug: string): string => {
+  const keyMap: { [key: string]: string } = {
+    'beauty': 'beauty',
+    'fragrances': 'fragrances',
+    'furniture': 'furniture',
+    'groceries': 'groceries',
+    'home-decoration': 'homeDecoration',
+    'kitchen-accessories': 'kitchenAccessories',
+    'laptops': 'laptops',
+    'mens-shirts': 'mensShirts',
+    'mens-shoes': 'mensShoes',
+    'mens-watches': 'mensWatches',
+    'mobile-accessories': 'mobileAccessories',
+    'motorcycle': 'motorcycle',
+    'skin-care': 'skincare',
+    'smartphones': 'smartphones',
+    'sports-accessories': 'sportsAccessories',
+    'sunglasses': 'sunglasses',
+    'tablets': 'tablets',
+    'tops': 'tops',
+    'vehicle': 'vehicle',
+    'womens-bags': 'womensBags',
+    'womens-dresses': 'womensDresses',
+    'womens-jewellery': 'womensJewellery',
+    'womens-shoes': 'womensShoes',
+    'womens-watches': 'womensWatches',
+  };
+  return keyMap[slug] || slug;
+};
+
 const CategoryCard: React.FC<{ category: Category; index: number }> = ({
   category,
   index,
 }) => {
-  const categoryName = category.name
-    .replace(/([A-Z])/g, " $1")
-    .replace(/^./, (str) => str.toUpperCase());
+  const t = useTranslations();
+  const locale = useLocale();
   const categorySlug = category.slug;
+  const categoryKey = getCategoryKey(categorySlug);
+  const categoryName = t(`categories.${categoryKey}`) || category.name;
   const image =
     categoryImages[categorySlug] ||
     "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop";
   const description =
+    t(`categoryDescriptions.${categoryKey}`) ||
     categoryDescriptions[categorySlug] ||
-    "Discover amazing products in this category";
+    t('categoriesPage.currentlyNoProducts');
   const productCount = category.count || 0;
   const isDisabled = productCount === 0;
 
@@ -165,7 +199,7 @@ const CategoryCard: React.FC<{ category: Category; index: number }> = ({
               : "bg-gradient-to-r from-blue-600 to-blue-700 transform group-hover:scale-110"
           }`}
         >
-          {productCount} items
+          {productCount} {t('categoriesPage.items')}
         </div>
 
         {/* Category Icon with Enhanced Animation - Only for enabled categories */}
@@ -180,7 +214,7 @@ const CategoryCard: React.FC<{ category: Category; index: number }> = ({
           <div className="absolute inset-0 bg-gray-900/30 flex items-center justify-center">
             <div className="bg-white/90 backdrop-blur-sm rounded-full px-4 py-2">
               <span className="text-gray-700 text-sm font-medium">
-                Out of Stock
+                {t('categoriesPage.outOfStock')}
               </span>
             </div>
           </div>
@@ -224,7 +258,7 @@ const CategoryCard: React.FC<{ category: Category; index: number }> = ({
                 : "text-gray-500 group-hover:text-blue-600"
             }`}
           >
-            {isDisabled ? "Not Available" : "View Products"}
+            {isDisabled ? t('categoriesPage.notAvailable') : t('categoriesPage.viewProducts')}
           </span>
           <div
             className={`flex items-center transition-all duration-300 ${
@@ -272,7 +306,7 @@ const CategoryCard: React.FC<{ category: Category; index: number }> = ({
     return cardContent;
   }
 
-  return <Link href={`/products?category=${categorySlug}`}>{cardContent}</Link>;
+  return <Link href={`/${locale}/products?category=${categorySlug}`}>{cardContent}</Link>;
 };
 
 const InfiniteCategoryGrid: React.FC<InfiniteCategoryGridProps> = ({
@@ -339,19 +373,19 @@ const InfiniteCategoryGrid: React.FC<InfiniteCategoryGridProps> = ({
             <div className="text-3xl font-bold text-blue-600">
               {initialCategories.length}
             </div>
-            <div className="text-gray-600">Total Categories</div>
+            <div className="text-gray-600">{t('categoriesPage.totalCategories')}</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-green-600">
               {totalProducts}+
             </div>
-            <div className="text-gray-600">Products</div>
+            <div className="text-gray-600">{t('categoriesPage.products')}</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-purple-600">
               {totalBrands}+
             </div>
-            <div className="text-gray-600">Brands</div>
+            <div className="text-gray-600">{t('categoriesPage.brands')}</div>
           </div>
         </div>
       </div>
@@ -378,24 +412,23 @@ const InfiniteCategoryGrid: React.FC<InfiniteCategoryGridProps> = ({
         {loading && (
           <div className="flex items-center justify-center gap-2">
             <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-gray-600">Loading more categories...</span>
+            <span className="text-gray-600">{t('categoriesPage.loadingMore')}</span>
           </div>
         )}
 
         {!hasMore && !loading && (
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8">
             <div className="text-2xl font-bold text-gray-900 mb-2">
-              🎉 You&apos;ve seen it all!
+              {t('categoriesPage.seenItAll')}
             </div>
             <p className="text-gray-600 mb-6">
-              You&apos;ve explored all our {initialCategories.length}{" "}
-              categories. Ready to start shopping?
+              {t('categoriesPage.exploredAll', { count: initialCategories.length })}
             </p>
             <Link
-              href="/products"
+              href={`/${locale}/products`}
               className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
             >
-              Browse All Products
+              {t('categoriesPage.browseAllProducts')}
               <FiArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -406,24 +439,23 @@ const InfiniteCategoryGrid: React.FC<InfiniteCategoryGridProps> = ({
       {hasMore && !loading && (
         <div className="text-center mt-12 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8">
           <h3 className="text-2xl font-bold text-gray-900 mb-2">
-            Can&apos;t find what you&apos;re looking for?
+            {t('categoriesPage.cantFind')}
           </h3>
           <p className="text-gray-600 mb-6">
-            Browse all our products or use our search feature to find exactly
-            what you need.
+            {t('categoriesPage.browseAllOrSearch')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/products"
+              href={`/${locale}/products`}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
             >
-              View All Products
+              {t('categoriesPage.viewAllProducts')}
             </Link>
             <Link
-              href="/products?search="
+              href={`/${locale}/products?search=`}
               className="bg-white hover:bg-gray-50 text-gray-700 px-6 py-3 rounded-lg font-medium border border-gray-300 transition-colors duration-200"
             >
-              Search Products
+              {t('categoriesPage.searchProducts')}
             </Link>
           </div>
         </div>

@@ -1,10 +1,8 @@
-import SettingsClient from "@/components/account/SettingsClient";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import { redirect } from 'next/navigation';
+import { getLocale } from 'next-intl/server';
 
-export default function SettingsPage() {
-  return (
-    <ProtectedRoute loadingMessage="Loading settings...">
-      <SettingsClient />
-    </ProtectedRoute>
-  );
+export default async function SettingsPage() {
+  const locale = await getLocale();
+  redirect(`/${locale}/account/settings`);
+  return null;
 }

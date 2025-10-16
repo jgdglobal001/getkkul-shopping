@@ -1,5 +1,8 @@
-import NotificationsClient from "@/components/account/NotificationsClient";
+import { redirect } from 'next/navigation';
+import { getLocale } from 'next-intl/server';
 
-export default function NotificationsPage() {
-  return <NotificationsClient />;
+export default async function NotificationsPage() {
+  const locale = await getLocale();
+  redirect(`/${locale}/account/notifications`);
+  return null;
 }

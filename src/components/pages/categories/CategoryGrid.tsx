@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { FiArrowRight, FiPackage } from "react-icons/fi";
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface Category {
   slug: string;
@@ -102,6 +102,7 @@ const CategoryCard: React.FC<{ category: Category; index: number }> = ({
   index,
 }) => {
   const t = useTranslations();
+  const locale = useLocale();
   const categorySlug = category.slug;
   const categoryKey = getCategoryKey(categorySlug);
 
@@ -120,7 +121,7 @@ const CategoryCard: React.FC<{ category: Category; index: number }> = ({
   const productCount = category.count || 0;
 
   return (
-    <Link href={`/products?category=${categorySlug}`}>
+    <Link href={`/${locale}/products?category=${categorySlug}`}>
       <div className="group relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden h-full">
         {/* Image Container */}
         <div className="relative h-32 lg:h-40 overflow-hidden">
@@ -176,6 +177,7 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
   totalProducts = 0,
 }) => {
   const t = useTranslations();
+  const locale = useLocale();
   // Take only first 12 categories
   const displayCategories = categories?.slice(0, 12) || [];
   const totalBrands = Math.floor(totalProducts / 20); // Estimate brands based on products
@@ -223,16 +225,16 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
-            href="/products"
+            href={`/${locale}/products`}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
           >
-            모든 상품 보기
+            {t('categoriesPage.viewAllProducts')}
           </Link>
           <Link
-            href="/products?search="
+            href={`/${locale}/products?search=`}
             className="bg-white hover:bg-gray-50 text-gray-700 px-6 py-3 rounded-lg font-medium border border-gray-300 transition-colors duration-200"
           >
-            상품 검색
+            {t('categoriesPage.searchProducts')}
           </Link>
         </div>
       </div>

@@ -4,7 +4,7 @@ import { getData } from "../../../(user)/helpers";
 import { getCategoriesWithCounts } from "../../../(user)/helpers/productHelpers";
 import { Metadata } from "next";
 import Link from "next/link";
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, getLocale } from 'next-intl/server';
 
 export const metadata: Metadata = {
   title: "Product Categories | Shofy - Shop by Category",
@@ -35,7 +35,8 @@ export const metadata: Metadata = {
 
 export default async function CategoriesPage() {
   const t = await getTranslations();
-  
+  const locale = await getLocale();
+
   // Fetch categories and all products data
   const [categoriesData, allProductsData] = await Promise.all([
     getData(`https://dummyjson.com/products/categories`),
@@ -70,7 +71,7 @@ export default async function CategoriesPage() {
         <nav className="mt-6 text-sm">
           <ol className="flex items-center justify-center space-x-2 text-gray-500">
             <li>
-              <Link href="/" className="hover:text-gray-700 transition-colors">
+              <Link href={`/${locale}/`} className="hover:text-gray-700 transition-colors">
                 {t('common.home')}
               </Link>
             </li>

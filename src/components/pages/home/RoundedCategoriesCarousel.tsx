@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import Link from "next/link";
 import Container from "@/components/Container";
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface Category {
   slug: string;
@@ -28,6 +28,7 @@ const RoundedCategoriesCarousel: React.FC<RoundedCategoriesCarouselProps> = ({
   const [scrollLeft, setScrollLeft] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
   const t = useTranslations();
+  const locale = useLocale();
 
   // Responsive items per view
   const getItemsPerView = () => {
@@ -207,7 +208,7 @@ const RoundedCategoriesCarousel: React.FC<RoundedCategoriesCarouselProps> = ({
                   className="flex-shrink-0 px-2"
                   style={{ width: `${100 / categories.length}%` }}
                 >
-                  <Link href={`/products?category=${category.slug}`}>
+                  <Link href={`/${locale}/products?category=${category.slug}`}>
                     <div className="group cursor-pointer">
                       {/* Image Container with Enhanced Shadow */}
                       <div className="relative mb-4 rounded-full aspect-square bg-gradient-to-br from-gray-100 to-gray-200 shadow-lg hover:shadow-2xl transition-all duration-300 transform">
@@ -273,7 +274,7 @@ const RoundedCategoriesCarousel: React.FC<RoundedCategoriesCarouselProps> = ({
         {/* View All Categories Link */}
         <div className="text-center mt-8">
           <Link
-            href="/categories"
+            href={`/${locale}/categories`}
             className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-300 shadow-md hover:shadow-lg"
           >
             {t('home.viewAllCategories')}

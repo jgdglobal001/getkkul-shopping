@@ -133,6 +133,10 @@ const koMessages = {
     "item": "상품",
     "items": "상품들"
   },
+  "checkout": {
+    "paymentCancelled": "결제가 취소되었습니다",
+    "paymentCancelledDesc": "결제가 취소되었습니다. 쇼핑을 계속하시거나 장바구니를 확인하세요."
+  },
   "auth": {
     "signIn": "로그인",
     "signUp": "회원가입",
@@ -248,6 +252,10 @@ const koMessages = {
     "activeFilters": "활성 필터",
     "clearAll": "모두 지우기",
     "shopByCategory": "카테고리별 쇼핑",
+    "shopByColor": "색상별 쇼핑",
+    "shopByBrand": "브랜드별 쇼핑",
+    "shopByPrice": "가격대별 쇼핑",
+    "noColorsAvailable": "사용 가능한 색상이 없습니다",
     "sortBy": "정렬",
     "default": "기본",
     "priceHighToLow": "가격 높은순",
@@ -258,6 +266,24 @@ const koMessages = {
     "showing": "표시 중",
     "of": "중",
     "products": "상품"
+  },
+  "categoriesPage": {
+    "items": "개",
+    "outOfStock": "재고 없음",
+    "currentlyNoProducts": "현재 이용 가능한 상품이 없습니다",
+    "notAvailable": "이용 불가",
+    "viewProducts": "상품 보기",
+    "totalCategories": "총 카테고리",
+    "products": "상품",
+    "brands": "브랜드",
+    "loadingMore": "카테고리를 더 불러오는 중...",
+    "seenItAll": "🎉 모두 확인하셨습니다!",
+    "exploredAll": "{count}개 카테고리를 모두 살펴보셨습니다. 쇼핑을 시작해 볼까요?",
+    "browseAllProducts": "전체 상품 보기",
+    "cantFind": "원하시는 상품을 찾지 못하셨나요?",
+    "browseAllOrSearch": "전체 상품을 보거나 검색 기능을 이용해 원하는 상품을 찾아보세요.",
+    "viewAllProducts": "모든 상품 보기",
+    "searchProducts": "상품 검색"
   }
 };
 
@@ -391,6 +417,10 @@ const enMessages = {
     "item": "item",
     "items": "items"
   },
+  "checkout": {
+    "paymentCancelled": "Your payment has been cancelled",
+    "paymentCancelledDesc": "Your payment was cancelled. You can continue shopping or view your cart."
+  },
   "auth": {
     "signIn": "Sign In",
     "signUp": "Sign Up",
@@ -506,6 +536,10 @@ const enMessages = {
     "activeFilters": "Active Filters",
     "clearAll": "Clear All",
     "shopByCategory": "Shop by Category",
+    "shopByColor": "Shop by Color",
+    "shopByBrand": "Shop by Brand",
+    "shopByPrice": "Shop by Price",
+    "noColorsAvailable": "No colors available",
     "sortBy": "Sort by",
     "default": "Default",
     "priceHighToLow": "Price: High to Low",
@@ -516,6 +550,24 @@ const enMessages = {
     "showing": "Showing",
     "of": "of",
     "products": "products"
+  },
+  "categoriesPage": {
+    "items": "items",
+    "outOfStock": "Out of Stock",
+    "currentlyNoProducts": "Currently no products available",
+    "notAvailable": "Not Available",
+    "viewProducts": "View Products",
+    "totalCategories": "Total Categories",
+    "products": "Products",
+    "brands": "Brands",
+    "loadingMore": "Loading more categories...",
+    "seenItAll": "🎉 You've seen it all!",
+    "exploredAll": "You've explored all our {count} categories. Ready to start shopping?",
+    "browseAllProducts": "Browse All Products",
+    "cantFind": "Can't find what you're looking for?",
+    "browseAllOrSearch": "Browse all our products or use our search feature to find exactly what you need.",
+    "viewAllProducts": "View All Products",
+    "searchProducts": "Search Products"
   }
 };
 
@@ -649,6 +701,10 @@ const zhMessages = {
     "item": "商品",
     "items": "商品"
   },
+  "checkout": {
+    "paymentCancelled": "支付已取消",
+    "paymentCancelledDesc": "您的支付已取消。您可以继续购物或查看购物车。"
+  },
   "auth": {
     "signIn": "登录",
     "signUp": "注册",
@@ -764,6 +820,10 @@ const zhMessages = {
     "activeFilters": "活动筛选",
     "clearAll": "清除全部",
     "shopByCategory": "按类别购物",
+    "shopByColor": "按颜色购物",
+    "shopByBrand": "按品牌购物",
+    "shopByPrice": "按价格购物",
+    "noColorsAvailable": "没有可用的颜色",
     "sortBy": "排序",
     "default": "默认",
     "priceHighToLow": "价格：从高到低",
@@ -774,6 +834,24 @@ const zhMessages = {
     "showing": "显示",
     "of": "共",
     "products": "产品"
+  },
+  "categoriesPage": {
+    "items": "件",
+    "outOfStock": "缺货",
+    "currentlyNoProducts": "目前没有可用的产品",
+    "notAvailable": "不可用",
+    "viewProducts": "查看产品",
+    "totalCategories": "总类别",
+    "products": "产品",
+    "brands": "品牌",
+    "loadingMore": "加载更多类别...",
+    "seenItAll": "🎉 您已经看完了!",
+    "exploredAll": "您已浏览了所有 {count} 个类别。准备开始购物了吗?",
+    "browseAllProducts": "浏览所有产品",
+    "cantFind": "找不到您要找的东西?",
+    "browseAllOrSearch": "浏览我们所有的产品或使用我们的搜索功能找到您需要的东西。",
+    "viewAllProducts": "查看所有产品",
+    "searchProducts": "搜索产品"
   }
 };
 

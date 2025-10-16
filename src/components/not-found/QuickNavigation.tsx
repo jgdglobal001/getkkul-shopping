@@ -40,10 +40,13 @@ function NavigationCard({
   );
 }
 
+import { useLocale } from 'next-intl';
+
 export default function QuickNavigation() {
+  const locale = useLocale();
   const navigationItems = [
     {
-      href: "/",
+      href: `/${locale}/`,
       icon: "🏠",
       title: "Homepage",
       subtitle: "Start fresh",
@@ -51,7 +54,7 @@ export default function QuickNavigation() {
       bgColor: "bg-blue-100 group-hover:bg-blue-200",
     },
     {
-      href: "/products",
+      href: `/${locale}/products`,
       icon: "🛍️",
       title: "All Products",
       subtitle: "Browse everything",
@@ -60,7 +63,7 @@ export default function QuickNavigation() {
       bgColor: "bg-green-100 group-hover:bg-green-200",
     },
     {
-      href: "/categories",
+      href: `/${locale}/categories`,
       icon: "📂",
       title: "Categories",
       subtitle: "Shop by type",
@@ -69,7 +72,7 @@ export default function QuickNavigation() {
       bgColor: "bg-purple-100 group-hover:bg-purple-200",
     },
     {
-      href: "/favorite",
+      href: `/${locale}/favorite`,
       icon: "❤️",
       title: "Wishlist",
       subtitle: "Saved items",
@@ -78,7 +81,7 @@ export default function QuickNavigation() {
       bgColor: "bg-red-100 group-hover:bg-red-200",
     },
     {
-      href: "/auth/signin",
+      href: `/${locale}/auth/signin`,
       icon: "🔑",
       title: "Account",
       subtitle: "Sign in or register",
@@ -86,7 +89,7 @@ export default function QuickNavigation() {
       bgColor: "bg-yellow-100 group-hover:bg-yellow-200",
     },
     {
-      href: "/cart",
+      href: `/${locale}/cart`,
       icon: "🛒",
       title: "Shopping Cart",
       subtitle: "View your cart",

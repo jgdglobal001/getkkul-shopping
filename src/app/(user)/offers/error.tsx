@@ -2,6 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import { FiRefreshCw, FiHome, FiShoppingBag } from "react-icons/fi";
+import { useLocale } from 'next-intl';
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -9,6 +10,7 @@ interface ErrorProps {
 }
 
 const OffersError: React.FC<ErrorProps> = ({ error, reset }) => {
+  const locale = useLocale();
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="text-center px-4">
@@ -44,7 +46,7 @@ const OffersError: React.FC<ErrorProps> = ({ error, reset }) => {
           </button>
 
           <Link
-            href="/"
+            href={`/${locale}/`}
             className="inline-flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
           >
             <FiHome className="w-5 h-5" />
@@ -52,7 +54,7 @@ const OffersError: React.FC<ErrorProps> = ({ error, reset }) => {
           </Link>
 
           <Link
-            href="/products"
+            href={`/${locale}/products`}
             className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
           >
             <FiShoppingBag className="w-5 h-5" />
@@ -66,19 +68,19 @@ const OffersError: React.FC<ErrorProps> = ({ error, reset }) => {
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
             <Link
-              href="/products?category=bestsellers"
+              href={`/${locale}/products?category=bestsellers`}
               className="text-blue-600 hover:text-blue-700 font-medium"
             >
               🌟 Best Sellers
             </Link>
             <Link
-              href="/products?category=new"
+              href={`/${locale}/products?category=new`}
               className="text-green-600 hover:text-green-700 font-medium"
             >
               ✨ New Arrivals
             </Link>
             <Link
-              href="/categories"
+              href={`/${locale}/categories`}
               className="text-purple-600 hover:text-purple-700 font-medium"
             >
               📂 All Categories
