@@ -97,7 +97,18 @@ export async function onRequest(context) {
                 expires_at TIMESTAMPTZ,
                 UNIQUE(provider, provider_user_id)
               )`;
-            const expAt = ${null};
+            const expiresAt = token?.expires_in ? new Date(Date.now() + (Number(token.expires_in) || 0) * 1000).toISOString() : null;
+            await sql`
+              INSERT INTO oauth_accounts (user_id, provider, provider_user_id, access_token, refresh_token, scope, token_type, expires_at)
+              VALUES (${userId}, 'google', ${profile.sub}, ${token.access_token || null}, ${token.refresh_token || null}, ${token.scope || null}, ${token.token_type || null}, ${expiresAt})
+              ON CONFLICT (provider, provider_user_id) DO UPDATE SET
+                user_id = EXCLUDED.user_id,
+                access_token = EXCLUDED.access_token,
+                refresh_token = EXCLUDED.refresh_token,
+                scope = EXCLUDED.scope,
+                token_type = EXCLUDED.token_type,
+                expires_at = EXCLUDED.expires_at;
+            `;
           }
         } else if (userTbl[0]?.r) {
           // NextAuth-like schema: public.user (UUID PK, email UNIQUE)
@@ -117,24 +128,7 @@ export async function onRequest(context) {
           }
         } // else: no known table, skip
       }
-            // Upsert oauth account mapping
-            const expiresAt = token?.expires_in ? new Date(Date.now() + (Number(token.expires_in) || 0) * 1000).toISOString() : null;
-            await sql`
-              INSERT INTO oauth_accounts (user_id, provider, provider_user_id, access_token, refresh_token, scope, token_type, expires_at)
-              VALUES (${userId}, 'google', ${profile.sub}, ${token.access_token || null}, ${token.refresh_token || null}, ${token.scope || null}, ${token.token_type || null}, ${expiresAt})
-              ON CONFLICT (provider, provider_user_id) DO UPDATE SET
-                user_id = EXCLUDED.user_id,
-                access_token = EXCLUDED.access_token,
-                refresh_token = EXCLUDED.refresh_token,
-                scope = EXCLUDED.scope,
-                token_type = EXCLUDED.token_type,
-                expires_at = EXCLUDED.expires_at;
-            `;
-          }
-        } else if (userTbl[0]?.r) {
-          // NextAuth-like schema handled above (no oauth_accounts)
-        }
-      }
+
     } catch (dbErr) {
       console.error('google upsert error', dbErr);
       // continue without failing auth
