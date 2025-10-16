@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import { useSession, signOut } from "next-auth/react";
+import { useAppSession as useSession } from "@/hooks/useAppSession";
 import { useRouter } from "next/navigation";
 import { IoChevronDownSharp } from "react-icons/io5";
 import {
@@ -39,7 +39,9 @@ const SettingsDropdown = () => {
 
   const handleSignOut = async () => {
     setIsOpen(false);
-    await signOut();
+    if (typeof window !== "undefined") {
+      window.location.href = "/api/auth/signout";
+    }
   };
 
   const handleNavigation = (path: string) => {

@@ -7,7 +7,7 @@ import ProductPrice from "./ProductPrice";
 import { FaStar, FaEye } from "react-icons/fa";
 import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import { useSession } from "next-auth/react";
+import { useAppSession as useSession } from "@/hooks/useAppSession";
 import { addToFavorite } from "@/redux/getkkulSlice";
 import toast from "react-hot-toast";
 import { useLocale, useTranslations } from 'next-intl';

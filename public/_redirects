@@ -1,7 +1,5 @@
 # Redirects for Cloudflare Pages
 
-# API routes - 가장 먼저 처리
-/api/* /api/:splat 200
 
 # Favicon mapping
 /favicon.ico /getkkul-logo-fabicon.png 200
@@ -56,5 +54,3 @@
 /account/* /ko/account/:splat 302
 /auth/* /ko/auth/:splat 302
 
-# Fallback for SPA routing - 가장 마지막에 위치
-/* /index.html 200
