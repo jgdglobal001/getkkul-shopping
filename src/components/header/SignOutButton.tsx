@@ -6,7 +6,7 @@ import { useLocale } from 'next-intl';
 
 
 interface Props {
-  session: Session | null;
+  session: { user?: any } | null;
 }
 
 const SignOutButton = ({ session }: Props) => {

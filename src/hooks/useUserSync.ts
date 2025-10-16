@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { useAppSession as useSession } from "@/hooks/useAppSession";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser, removeUser } from "@/redux/getkkulSlice";
 import type { RootState } from "@/redux/store";

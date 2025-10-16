@@ -2,7 +2,7 @@
 import Container from "../Container";
 import Link from "next/link";
 import { navigationKeys } from "@/constants";
-import { useSession } from "next-auth/react";
+import { useAppSession as useSession } from "@/hooks/useAppSession";
 import SignOutButton from "./SignOutButton";
 import { useTranslations, useLocale } from 'next-intl';
 

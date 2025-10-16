@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useAppSession as useSession } from "@/hooks/useAppSession";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { getDefaultDashboardRoute } from "@/lib/rbac/roles";
@@ -18,7 +18,7 @@ export default function RoleDashboardRedirect() {
       return;
     }
 
-    const userRole = session.user.role || "user";
+    const userRole = (session.user.role || "user") as any;
     const dashboardRoute = getDefaultDashboardRoute(userRole);
     router.push(dashboardRoute);
   }, [session, status, router]);

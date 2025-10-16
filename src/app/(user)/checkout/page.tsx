@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useAppSession as useSession } from "@/hooks/useAppSession";
 import { useRouter, useSearchParams } from "next/navigation";
 import Container from "@/components/Container";
 import PriceFormat from "@/components/PriceFormat";

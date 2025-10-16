@@ -10,7 +10,7 @@ import { redirect, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import { useSession } from "next-auth/react";
+import { useAppSession as useSession } from "@/hooks/useAppSession";
 
 const SuccessPage = () => {
   const searchParams = useSearchParams();
