@@ -5,7 +5,8 @@ export async function onRequest(context) {
   const provider = url.searchParams.get('provider');
   const cb = url.searchParams.get('callback') || '/';
 
-  const origin = (env.BASE_URL || `${url.protocol}//${url.host}`).replace(/\/$/, '');
+  // Always use current request host to support Preview and Production without mismatch
+  const origin = `${url.protocol}//${url.host}`.replace(/\/$/, '');
 
   const makeState = () => crypto.getRandomValues(new Uint8Array(8)).reduce((a,b)=>a+('0'+b.toString(16)).slice(-2),'');
 

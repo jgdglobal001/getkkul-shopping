@@ -7,7 +7,8 @@ export async function onRequest(context) {
   const code = url.searchParams.get('code');
   const state = url.searchParams.get('state') || '';
 
-  const origin = (env.BASE_URL || `${url.protocol}//${url.host}`).replace(/\/$/, '');
+  // Use the current request host to avoid preview/production mismatch
+  const origin = `${url.protocol}//${url.host}`.replace(/\/$/, '');
 
   const [nonce, cbEnc] = state.split('|');
   const cb = decodeURIComponent(cbEnc || '/');
@@ -113,7 +114,14 @@ export async function onRequest(context) {
           }
           const userId = rows?.[0]?.id;
           if (userId) {
-            session.user.role = session.user.role || 'user';
+            // Ensure role comes from DB (defaults to 'user' if missing)
+            try {
+              const roleRows = await sql`SELECT role FROM "users" WHERE id = ${userId} LIMIT 1;`;
+              const dbRole = roleRows?.[0]?.role || 'user';
+              session.user.role = dbRole;
+            } catch {
+              session.user.role = session.user.role || 'user';
+            }
             session.user.dbId = userId;
             // Ensure oauth_accounts table exists
             await sql`
