@@ -27,7 +27,7 @@ export default function DashboardNavigation() {
         return "Delivery Dashboard";
       case USER_ROLES.USER:
       default:
-        return "My Account";
+        return "My Page";
     }
   };
 

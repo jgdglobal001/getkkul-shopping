@@ -2,13 +2,16 @@
 
 import Link from "next/link";
 import { FiUsers, FiBox, FiShoppingBag, FiBarChart2 } from "react-icons/fi";
+import { useLocale } from "next-intl";
 
 export default function AdminOverviewPage() {
+  const locale = useLocale();
+  const base = `/${locale}/admin-dashboard`;
   const cards = [
-    { href: "/account/admin/orders", title: "Orders", desc: "View and manage orders", icon: FiShoppingBag },
-    { href: "/account/admin/products", title: "Products", desc: "Manage catalog & inventory", icon: FiBox },
-    { href: "/account/admin/users", title: "Users", desc: "Manage users & roles", icon: FiUsers },
-    { href: "/account/admin/settings", title: "Settings", desc: "Store settings & configuration", icon: FiBarChart2 },
+    { href: `${base}/orders`, title: "Orders", desc: "View and manage orders", icon: FiShoppingBag },
+    { href: `${base}/products`, title: "Products", desc: "Manage catalog & inventory", icon: FiBox },
+    { href: `${base}/users`, title: "Users", desc: "Manage users & roles", icon: FiUsers },
+    { href: `${base}/settings`, title: "Settings", desc: "Store settings & configuration", icon: FiBarChart2 },
   ];
 
   return (

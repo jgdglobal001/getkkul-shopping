@@ -7,6 +7,9 @@
 # Admin redirects
 /admin /admin-dashboard 301
 /admin/* /admin-dashboard/:splat 301
+# Localized admin dashboard vanity path
+/:locale/admin-dashboard /:locale/account/admin 302
+/:locale/admin-dashboard/* /:locale/account/admin/:splat 302
 
 # Authentication redirects
 /login /auth/signin 301
@@ -22,10 +25,8 @@
 /user-dashboard/ /user-dashboard 301
 /account-dashboard/ /account-dashboard 301
 /packer-dashboard/ /packer-dashboard 301
-# Localized account pages map to non-localized (until full i18n implemented)
-/:locale/account /account 200
-/:locale/account/* /account/:splat 200
-/:locale/account/*.txt /account/:splat.txt 200
+# Admin localized shortcuts
+/:locale/admin /:locale/account/admin 302
 
 /delivery-dashboard/ /delivery-dashboard 301
 
@@ -52,5 +53,8 @@
 /cart /ko/cart 302
 /account /ko/account 302
 /account/* /ko/account/:splat 302
+/mypage /ko/account 302
 /auth/* /ko/auth/:splat 302
+# Localized mypage vanity path
+/:locale/mypage /:locale/account 302
 

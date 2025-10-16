@@ -4,9 +4,12 @@ import AdminProtectedRoute from "@/components/AdminProtectedRoute";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FiHome, FiUsers, FiBox, FiSettings, FiShoppingBag } from "react-icons/fi";
+import { useLocale } from "next-intl";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const locale = useLocale();
+  const base = `/${locale}/admin-dashboard`;
 
   const NavItem = ({ href, icon: Icon, label }: { href: string; icon: any; label: string }) => {
     const active = pathname === href;
@@ -35,11 +38,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             {/* Sidebar */}
             <aside className="col-span-12 md:col-span-3 lg:col-span-2">
               <nav className="space-y-2 bg-white border border-gray-200 p-3 rounded-xl">
-                <NavItem href="/account/admin" icon={FiHome} label="Overview" />
-                <NavItem href="/account/admin/orders" icon={FiShoppingBag} label="Orders" />
-                <NavItem href="/account/admin/products" icon={FiBox} label="Products" />
-                <NavItem href="/account/admin/users" icon={FiUsers} label="Users" />
-                <NavItem href="/account/admin/settings" icon={FiSettings} label="Settings" />
+                <NavItem href={base} icon={FiHome} label="Overview" />
+                <NavItem href={`${base}/orders`} icon={FiShoppingBag} label="Orders" />
+                <NavItem href={`${base}/products`} icon={FiBox} label="Products" />
+                <NavItem href={`${base}/users`} icon={FiUsers} label="Users" />
+                <NavItem href={`${base}/settings`} icon={FiSettings} label="Settings" />
               </nav>
             </aside>
 

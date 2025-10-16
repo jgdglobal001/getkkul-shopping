@@ -13,7 +13,7 @@ export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
 export function getDefaultPageForRole(role: UserRole): string {
   switch (role) {
     case USER_ROLES.ADMIN:
-      return "/admin";
+      return "/admin-dashboard";
     case USER_ROLES.ACCOUNT:
       return "/account-dashboard";
     case USER_ROLES.PACKER:
@@ -22,7 +22,7 @@ export function getDefaultPageForRole(role: UserRole): string {
       return "/delivery-dashboard";
     case USER_ROLES.USER:
     default:
-      return "/account";
+      return "/mypage";
   }
 }
 
@@ -305,7 +305,7 @@ export function getAvailableStatusUpdates(
 export function getDashboardRoute(userRole: UserRole): string {
   switch (userRole) {
     case USER_ROLES.ADMIN:
-      return "/admin";
+      return "/admin-dashboard";
     case USER_ROLES.ACCOUNT:
       return "/account-dashboard";
     case USER_ROLES.PACKER:
@@ -314,6 +314,6 @@ export function getDashboardRoute(userRole: UserRole): string {
       return "/delivery-dashboard";
     case USER_ROLES.USER:
     default:
-      return "/account";
+      return "/mypage";
   }
 }

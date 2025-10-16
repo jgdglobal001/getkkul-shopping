@@ -3,6 +3,6 @@ import { getLocale } from "next-intl/server";
 
 export default async function AdminRootRedirect() {
   const locale = await getLocale();
-  redirect(`/${locale}/account/admin`);
+  redirect(`/${locale}/admin-dashboard`);
 }
 
