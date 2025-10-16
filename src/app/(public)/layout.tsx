@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import Layout from "@/components/layout/Layout";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
+import { CurrencyProvider } from "@/contexts/CurrencyContext";
 
 export const metadata: Metadata = {
   title: "Getkkul - Information Pages",
@@ -19,11 +20,13 @@ export default async function PublicLayout({
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <Layout>
-        <Header />
-        {children}
-        <Footer />
-      </Layout>
+      <CurrencyProvider>
+        <Layout>
+          <Header />
+          {children}
+          <Footer />
+        </Layout>
+      </CurrencyProvider>
     </NextIntlClientProvider>
   );
 }
