@@ -313,6 +313,9 @@ const InfiniteCategoryGrid: React.FC<InfiniteCategoryGridProps> = ({
   initialCategories,
   totalProducts = 0,
 }) => {
+  const t = useTranslations();
+  const locale = useLocale();
+
   const [categories, setCategories] = useState<Category[]>(
     initialCategories.slice(0, 12)
   );
