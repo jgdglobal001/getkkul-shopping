@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useAppSession as useSession } from "@/hooks/useAppSession";
 
 const AuthDebug = () => {
   const { data: session, status } = useSession();

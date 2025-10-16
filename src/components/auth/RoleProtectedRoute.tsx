@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useAppSession as useSession } from "@/hooks/useAppSession";
 import { useRouter } from "next/navigation";
 import { useEffect, ReactNode } from "react";
 import { USER_ROLES, getDashboardRoute } from "@/lib/rbac/permissions";

@@ -86,7 +86,36 @@ export async function onRequest(context) {
               updatedAt = now()
             RETURNING id;
           `;
-          if (rows?.[0]?.id) session.user.role = session.user.role || 'user';
+          const userId = rows?.[0]?.id;
+          if (userId) {
+            session.user.role = session.user.role || 'user';
+            session.user.dbId = userId;
+            await sql`
+              CREATE TABLE IF NOT EXISTS oauth_accounts (
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+                provider TEXT NOT NULL,
+                provider_user_id TEXT NOT NULL,
+                access_token TEXT,
+                refresh_token TEXT,
+                scope TEXT,
+                token_type TEXT,
+                expires_at TIMESTAMPTZ,
+                UNIQUE(provider, provider_user_id)
+              )`;
+            const expiresAt = token?.expires_in ? new Date(Date.now() + (Number(token.expires_in) || 0) * 1000).toISOString() : null;
+            await sql`
+              INSERT INTO oauth_accounts (user_id, provider, provider_user_id, access_token, refresh_token, scope, token_type, expires_at)
+              VALUES (${userId}, 'naver', ${profile.id}, ${token.access_token || null}, ${token.refresh_token || null}, ${token.scope || null}, ${token.token_type || null}, ${expiresAt})
+              ON CONFLICT (provider, provider_user_id) DO UPDATE SET
+                user_id = EXCLUDED.user_id,
+                access_token = EXCLUDED.access_token,
+                refresh_token = EXCLUDED.refresh_token,
+                scope = EXCLUDED.scope,
+                token_type = EXCLUDED.token_type,
+                expires_at = EXCLUDED.expires_at;
+            `;
+          }
         } else if (userTbl[0]?.r) {
           await sql`
             INSERT INTO "user" (name, email, image)

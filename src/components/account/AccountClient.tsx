@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useAppSession as useSession } from "@/hooks/useAppSession";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import ProfileEditForm from "@/components/account/ProfileEditForm";

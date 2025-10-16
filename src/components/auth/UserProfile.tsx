@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
+import { useAppSession as useSession } from "@/hooks/useAppSession";
 import Link from "next/link";
 import { useState } from "react";
 import {
@@ -45,7 +45,12 @@ export default function UserProfile() {
   }
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/" });
+    try {
+      const locale = (typeof document !== 'undefined') ? (document.documentElement.getAttribute('lang') || 'ko') : 'ko';
+      window.location.href = `/api/auth/signout?redirect=/${locale}`;
+    } catch {
+      window.location.href = `/api/auth/signout?redirect=/`;
+    }
   };
 
   return (
