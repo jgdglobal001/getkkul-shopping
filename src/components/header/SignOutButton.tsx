@@ -3,12 +3,15 @@ import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { useLocale } from 'next-intl';
+
 
 interface Props {
   session: Session | null;
 }
 
 const SignOutButton = ({ session }: Props) => {
+  const locale = useLocale();
   const handleSignOut = async () => {
     try {
       // Only clear browser storage on client side
@@ -41,7 +44,7 @@ const SignOutButton = ({ session }: Props) => {
 
       // Sign out through NextAuth
       await signOut({
-        callbackUrl: "/",
+        callbackUrl: `/${locale}`,
         redirect: true,
       });
 
@@ -57,7 +60,7 @@ const SignOutButton = ({ session }: Props) => {
       {session?.user && <button onClick={handleSignOut}>Sign out</button>}
       {!session?.user && (
         <Link
-          href={"/auth/signin"}
+          href={`/${locale}/auth/signin`}
           className="hover:text-theme-color duration-300 cursor-pointer"
         >
           Please login to view your cart

@@ -149,7 +149,9 @@ const koMessages = {
     "alreadyHaveAccount": "이미 계정이 있으신가요?",
     "createAccount": "계정 만들기",
     "signInWith": "다음으로 로그인",
-    "orContinueWith": "또는 다음으로 계속"
+    "orContinueWith": "또는 다음으로 계속",
+    "signInDescription": "겟꿀 계정으로 로그인",
+    "registerDescription": "겟꿀 계정 만들기"
   },
   "validation": {
     "required": "필수 입력 항목입니다",
@@ -464,7 +466,9 @@ const enMessages = {
     "alreadyHaveAccount": "Already have an account?",
     "createAccount": "Create Account",
     "signInWith": "Sign in with",
-    "orContinueWith": "Or continue with"
+    "orContinueWith": "Or continue with",
+    "signInDescription": "Sign in to your Getkkul account",
+    "registerDescription": "Create your Getkkul account"
   },
   "validation": {
     "required": "This field is required",
@@ -779,7 +783,9 @@ const zhMessages = {
     "alreadyHaveAccount": "已经有账户了？",
     "createAccount": "创建账户",
     "signInWith": "使用以下方式登录",
-    "orContinueWith": "或继续使用"
+    "orContinueWith": "或继续使用",
+    "signInDescription": "登录您的Getkkul账户",
+    "registerDescription": "创建您的Getkkul账户"
   },
   "validation": {
     "required": "此字段为必填项",

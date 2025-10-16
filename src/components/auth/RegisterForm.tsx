@@ -7,7 +7,11 @@ import Link from "next/link";
 // import { FaKakao, FaGoogle } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 
+import { useLocale } from 'next-intl';
+
 export default function RegisterForm() {
+  const locale = useLocale();
+
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -66,7 +70,7 @@ export default function RegisterForm() {
         <span className="text-sm text-gray-600">
           이미 계정이 있으신가요?{" "}
           <Link
-            href="/auth/signin"
+            href={`/${locale}/auth/signin`}
             className="font-medium text-blue-600 hover:text-blue-500"
           >
             로그인

@@ -7,11 +7,15 @@ import { FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
 import { SiKakao, SiNaver } from "react-icons/si";
 import { toast } from "react-hot-toast";
 import { signIn } from "next-auth/react";
+import { useLocale } from 'next-intl';
+
 
 export default function SignInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const locale = useLocale();
+
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -100,7 +104,7 @@ export default function SignInForm() {
         <span className="text-sm text-gray-600">
           Don&apos;t have an account?{" "}
           <Link
-            href="/auth/register"
+            href={`/${locale}/auth/register`}
             className="font-medium text-blue-600 hover:text-blue-500"
           >
             Sign up

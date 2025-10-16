@@ -8,11 +8,13 @@ import MobileNavigation from "./MobileNavigation";
 import HeaderIcons from "./HeaderIcons";
 import Logo from "../Logo";
 import UserProfileDropdown from "./UserProfileDropdown";
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 const MiddleHeader = () => {
   const { data: session } = useSession();
   const t = useTranslations();
+  const locale = useLocale();
+
 
   return (
     <div className="border-b border-b-gray-400">
@@ -32,7 +34,7 @@ const MiddleHeader = () => {
                 <LiaUser />
               </div>
               <div>
-                <Link href={"/auth/signin"}>
+                <Link href={`/${locale}/auth/signin`}>
                   <p className="text-xs hover:text-sky-color ease-in-out duration-300 cursor-pointer">
                     {t('header.welcome')}, {t('common.login')}
                   </p>
@@ -40,14 +42,14 @@ const MiddleHeader = () => {
 
                 <div className="text-sm">
                   <Link
-                    href={"/auth/signin"}
+                    href={`/${locale}/auth/signin`}
                     className="hover:text-sky-color ease-in-out duration-300 cursor-pointer"
                   >
                     {t('common.login')}{" "}
                   </Link>
                   /{" "}
                   <Link
-                    href={"/auth/register"}
+                    href={`/${locale}/auth/register`}
                     className="hover:text-sky-color ease-in-out duration-300 cursor-pointer"
                   >
                     {t('common.register')}
