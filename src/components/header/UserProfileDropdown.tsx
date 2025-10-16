@@ -31,6 +31,9 @@ const UserProfileDropdown = ({ user }: UserProfileDropdownProps) => {
 
   // Close dropdown when clicking outside
   useEffect(() => {
+    // Only add event listeners on client side
+    if (typeof window === "undefined") return;
+
     const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&

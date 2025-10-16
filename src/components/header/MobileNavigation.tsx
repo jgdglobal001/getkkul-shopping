@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { RiMenu3Fill } from "react-icons/ri";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import Link from "next/link";
@@ -15,10 +15,25 @@ const navigation = [
 ];
 
 const MobileNavigation = () => {
-  let [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+
+  if (!isClient) {
+    // Return static menu button for SSR
+    return (
+      <div className="text-2xl md:hidden text-gray-500 hover:text-theme-color duration-200 cursor-pointer">
+        <RiMenu3Fill />
+      </div>
+    );
+  }
   return (
     <>
       <div className="text-2xl md:hidden text-gray-500 hover:text-theme-color duration-200 cursor-pointer">
