@@ -26,11 +26,22 @@ export async function onRequest(context) {
     tUrl.searchParams.set('code', code || '');
     tUrl.searchParams.set('state', state);
 
-    const tokenRes = await fetch(tUrl.toString(), { method: 'GET' });
+    const tokenRes = await fetch(tUrl.toString(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type: 'authorization_code',
+        client_id: env.NAVER_CLIENT_ID,
+        client_secret: env.NAVER_CLIENT_SECRET,
+        code: code || '',
+        state,
+        redirect_uri: `${origin}/api/auth/callback/naver`,
+      })
+    });
     if (!tokenRes.ok) {
       const text = await tokenRes.text();
       console.error('naver token error', text);
-      return new Response('Token exchange failed', { status: 500 });
+      return new Response(`Naver token failed: ${text}`, { status: 502 });
     }
     const token = await tokenRes.json();
 

@@ -3,6 +3,9 @@
 # API routes - 가장 먼저 처리
 /api/* /api/:splat 200
 
+# Favicon mapping
+/favicon.ico /getkkul-logo-fabicon.png 200
+
 # Admin redirects
 /admin /admin-dashboard 301
 /admin/* /admin-dashboard/:splat 301
