@@ -163,7 +163,11 @@ export default function AccountLayout({ children }: AccountLayoutProps) {
             <select
               id="tab-select"
               value={pathname}
-              onChange={(e) => (window.location.href = e.target.value)}
+              onChange={(e) => {
+                if (typeof window !== "undefined") {
+                  window.location.href = e.target.value;
+                }
+              }}
               className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-theme-color focus:outline-none focus:ring-theme-color sm:text-sm"
             >
               {tabs.map((tab) => (

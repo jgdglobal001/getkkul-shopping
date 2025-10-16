@@ -11,30 +11,33 @@ interface Props {
 const SignOutButton = ({ session }: Props) => {
   const handleSignOut = async () => {
     try {
-      // Clear localStorage data
-      localStorage.clear();
+      // Only clear browser storage on client side
+      if (typeof window !== "undefined") {
+        // Clear localStorage data
+        localStorage.clear();
 
-      // Clear sessionStorage data
-      sessionStorage.clear();
+        // Clear sessionStorage data
+        sessionStorage.clear();
 
-      // Clear specific cookies by setting them to expire
-      const cookiesToClear = [
-        "next-auth.session-token",
-        "next-auth.csrf-token",
-        "__Secure-next-auth.session-token",
-        "__Host-next-auth.csrf-token",
-        "cart-items",
-        "user-preferences",
-        "wishlist-items",
-      ];
+        // Clear specific cookies by setting them to expire
+        const cookiesToClear = [
+          "next-auth.session-token",
+          "next-auth.csrf-token",
+          "__Secure-next-auth.session-token",
+          "__Host-next-auth.csrf-token",
+          "cart-items",
+          "user-preferences",
+          "wishlist-items",
+        ];
 
-      cookiesToClear.forEach((cookieName) => {
-        // Clear cookie by setting it to expire in the past
-        document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname}`;
-        document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-        // Also try clearing without domain for broader compatibility
-        document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
-      });
+        cookiesToClear.forEach((cookieName) => {
+          // Clear cookie by setting it to expire in the past
+          document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname}`;
+          document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+          // Also try clearing without domain for broader compatibility
+          document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
+        });
+      }
 
       // Sign out through NextAuth
       await signOut({

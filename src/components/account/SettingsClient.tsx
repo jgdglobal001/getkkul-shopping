@@ -4,13 +4,15 @@ import { signOut } from "next-auth/react";
 
 export default function SettingsClient() {
   const handleDeleteAccount = () => {
-    if (
-      window.confirm(
-        "Are you sure you want to delete your account? This action cannot be undone."
-      )
-    ) {
-      // TODO: Implement account deletion
-      console.log("Delete account requested");
+    if (typeof window !== "undefined") {
+      if (
+        window.confirm(
+          "Are you sure you want to delete your account? This action cannot be undone."
+        )
+      ) {
+        // TODO: Implement account deletion
+        console.log("Delete account requested");
+      }
     }
   };
 

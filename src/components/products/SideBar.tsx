@@ -19,9 +19,16 @@ const SideBar = ({ product }: Props) => {
   const [existingProduct, setExistingProduct] = useState<ProductType | null>(
     null
   );
+  const [isClient, setIsClient] = useState(false);
   const { data: session } = useSession();
 
   useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isClient) return;
+
     if (session?.user) {
       const availableProduct = favorite?.find(
         (item) => item?.id === product?.id
@@ -32,11 +39,12 @@ const SideBar = ({ product }: Props) => {
         setExistingProduct(null);
       }
     }
-  }, [favorite, product, dispatch, existingProduct, session?.user]);
+  }, [favorite, product, dispatch, existingProduct, session?.user, isClient]);
 
   useEffect(() => {
+    if (!isClient) return;
     !session?.user && dispatch(resetFavorite());
-  }, [session?.user, dispatch]);
+  }, [session?.user, dispatch, isClient]);
 
   const handleFavorite = () => {
     if (session?.user) {
@@ -52,6 +60,11 @@ const SideBar = ({ product }: Props) => {
       toast.error("Please login to add to favorites");
     }
   };
+
+  // Don't render during SSR to prevent hydration mismatch
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <div className="absolute right-2 bottom-44 border flex flex-col text-2xl border-border-color bg-white rounded-md overflow-hidden transform translate-x-20 group-hover:translate-x-0 duration-300 z-40">
