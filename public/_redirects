@@ -24,6 +24,11 @@
 /user-dashboard/ /user-dashboard 301
 /account-dashboard/ /account-dashboard 301
 /packer-dashboard/ /packer-dashboard 301
+# Localized account pages map to non-localized (until full i18n implemented)
+/:locale/account /account 200
+/:locale/account/* /account/:splat 200
+/:locale/account/*.txt /account/:splat.txt 200
+
 /delivery-dashboard/ /delivery-dashboard 301
 
 # Next.js App Router 라우팅

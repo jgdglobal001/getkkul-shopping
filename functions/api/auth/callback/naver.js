@@ -1,4 +1,6 @@
 // OAuth callback for Naver
+import { neon } from "@neondatabase/serverless";
+
 export async function onRequest(context) {
   const { request, env } = context;
   const url = new URL(request.url);
@@ -62,6 +64,36 @@ export async function onRequest(context) {
       },
       issuedAt: Date.now(),
     };
+
+    // Upsert user into Neon Postgres
+    try {
+      if (env.DATABASE_URL) {
+        const sql = neon(env.DATABASE_URL);
+        await sql`CREATE TABLE IF NOT EXISTS users (
+          id TEXT PRIMARY KEY,
+          provider TEXT NOT NULL,
+          provider_user_id TEXT NOT NULL,
+          name TEXT,
+          email TEXT,
+          image TEXT,
+          created_at TIMESTAMPTZ DEFAULT now(),
+          last_login TIMESTAMPTZ DEFAULT now()
+        )`;
+        const uid = `naver:${profile.id}`;
+        await sql`
+          INSERT INTO users (id, provider, provider_user_id, name, email, image)
+          VALUES (${uid}, 'naver', ${profile.id}, ${profile.name || profile.nickname || 'Naver User'}, ${profile.email}, ${profile.profile_image})
+          ON CONFLICT (id) DO UPDATE SET
+            name = EXCLUDED.name,
+            email = EXCLUDED.email,
+            image = EXCLUDED.image,
+            last_login = now();
+        `;
+      }
+    } catch (dbErr) {
+      console.error('naver upsert error', dbErr);
+      // continue without failing auth
+    }
 
     const cookie = `app_session=${btoa(JSON.stringify(session))}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=1209600`;
 
