@@ -7,7 +7,7 @@ export async function onRequest(context) {
   const code = url.searchParams.get('code');
   const state = url.searchParams.get('state') || '';
 
-  const origin = env.BASE_URL || `${url.protocol}//${url.host}`;
+  const origin = (env.BASE_URL || `${url.protocol}//${url.host}`).replace(/\/$/, '');
 
   const [nonce, cbEnc] = state.split('|');
   const cb = decodeURIComponent(cbEnc || '/');
