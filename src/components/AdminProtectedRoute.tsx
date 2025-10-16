@@ -7,6 +7,8 @@ import Container from "@/components/Container";
 import { FiLoader, FiShield } from "react-icons/fi";
 import Link from "next/link";
 
+import { useLocale } from 'next-intl';
+
 interface AdminProtectedRouteProps {
   children: React.ReactNode;
   fallbackPath?: string;
@@ -20,6 +22,8 @@ const AdminProtectedRoute = ({
 }: AdminProtectedRouteProps) => {
   const sess = useSession() as | { data: any; status: "loading" | "authenticated" | "unauthenticated" } | undefined;
   const session = sess?.data;
+  const locale = useLocale();
+
   const status = (sess?.status ?? "loading") as "loading" | "authenticated" | "unauthenticated";
   const router = useRouter();
   const [isRedirecting, setIsRedirecting] = useState(false);
@@ -33,18 +37,15 @@ const AdminProtectedRoute = ({
     if (status === "unauthenticated" || !session?.user) {
       setIsRedirecting(true);
       const timer = setTimeout(() => {
-        router.push("/auth/signin");
+        router.push(`/${locale}/auth/signin`);
       }, 1500);
       return () => clearTimeout(timer);
     }
 
     // Check if user is authenticated but not admin
     if (session?.user && session.user.role !== "admin") {
-      setIsRedirecting(true);
-      const timer = setTimeout(() => {
-        router.push(fallbackPath);
-      }, 1500);
-      return () => clearTimeout(timer);
+      // Do not auto-redirect; show apply UI instead
+      setIsRedirecting(false);
     } else if (session?.user?.role === "admin") {
       setIsRedirecting(false);
     }
@@ -81,7 +82,7 @@ const AdminProtectedRoute = ({
           </div>
 
           <Link
-            href="/auth/signin"
+            href={`/${locale}/auth/signin`}
             className="inline-block bg-theme-color text-white px-6 py-2 rounded hover:bg-theme-color/80"
           >
             Sign In
@@ -120,19 +121,39 @@ const AdminProtectedRoute = ({
           <div className="flex items-center justify-center space-x-4 mb-6">
             <FiShield className="text-xl text-red-500" />
             <span className="text-gray-500">
-              Access denied - Redirecting...
+              관리자 권한이 없습니다. 아래 버튼으로 관리자 권한을 신청하세요.
             </span>
           </div>
 
           <div className="space-x-4">
-            <Link
-              href="/account"
+            <button
+              onClick={async () => {
+                try {
+                  const res = await fetch('/api/admin/apply', { method: 'POST' });
+                  const data = await res.json();
+                  if (data?.status === 'already_pending') {
+                    alert('이미 신청 내역이 있습니다(대기중).');
+                  } else if (data?.success) {
+                    alert('관리자 권한 신청이 접수되었습니다.');
+                  } else {
+                    alert('신청 처리 중 오류가 발생했습니다.');
+                  }
+                } catch (e) {
+                  alert('신청 처리 중 오류가 발생했습니다.');
+                }
+              }}
               className="inline-block bg-theme-color text-white px-6 py-2 rounded hover:bg-theme-color/80"
+            >
+              관리자 권한 신청
+            </button>
+            <Link
+              href={`/${locale}/account`}
+              className="inline-block bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600"
             >
               Go to Account
             </Link>
             <Link
-              href="/"
+              href={`/${locale}`}
               className="inline-block bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600"
             >
               Go Home

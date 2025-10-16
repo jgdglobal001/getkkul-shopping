@@ -3,9 +3,13 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { useLocale } from 'next-intl';
+
 
 function ErrorContent() {
   const searchParams = useSearchParams();
+  const locale = useLocale();
+
   const error = searchParams.get("error");
 
   const getErrorMessage = (error: string | null) => {
@@ -61,13 +65,13 @@ function ErrorContent() {
           </div>
           <div className="flex space-x-4">
             <Link
-              href="/auth/signin"
+              href={`/${locale}/auth/signin`}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Try Again
             </Link>
             <Link
-              href="/"
+              href={`/${locale}`}
               className="group relative w-full flex justify-center py-2 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Go Home

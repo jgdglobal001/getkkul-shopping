@@ -1,5 +1,7 @@
 # Redirects for Cloudflare Pages
 
+# Ensure API functions are never rewritten
+/api/* /api/:splat 200
 
 # Favicon mapping
 /favicon.ico /getkkul-logo-fabicon.png 200
@@ -30,26 +32,24 @@
 
 /delivery-dashboard/ /delivery-dashboard 301
 
-# Next.js App Router 라우팅
-/ko/* /ko/:splat 200
-/en/* /en/:splat 200
-/zh/* /zh/:splat 200
-# RSC flight payload for locale root: map /:locale/index.txt -> /:locale.txt
+# RSC flight payload for locale root: map /:locale/index.txt -> /:locale.txt (place before any locale wildcards)
 /:locale/index.txt /:locale.txt 200
-
 /ko/index.txt /ko.txt 200
 /en/index.txt /en.txt 200
 /zh/index.txt /zh.txt 200
-
 
 # 루트 경로 처리
 / /ko 302
 
 # Non-localized to default locale (ko)
 /products /ko/products 302
+/products/* /ko/products/:splat 302
 /categories /ko/categories 302
+/categories/* /ko/categories/:splat 302
 /offers /ko/offers 302
+/offers/* /ko/offers/:splat 302
 /favorite /ko/favorite 302
+/favorite/* /ko/favorite/:splat 302
 /cart /ko/cart 302
 /account /ko/account 302
 /account/* /ko/account/:splat 302
@@ -57,4 +57,3 @@
 /auth/* /ko/auth/:splat 302
 # Localized mypage vanity path
 /:locale/mypage /:locale/account 302
-
