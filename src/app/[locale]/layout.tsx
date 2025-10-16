@@ -8,7 +8,7 @@ import { UserSyncProvider } from "@/components/UserSyncProvider";
 import Head from "next/head";
 import PurchaseWidget from "@/components/PurchaseWidget";
 import StateProvider from "@/components/auth/StateProvider";
-import NextAuthProvider from "@/components/auth/NextAuthProvider";
+
 import ClientOnly from "@/components/common/ClientOnly";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
@@ -50,16 +50,14 @@ export default async function LocaleLayout({
       <body>
         <ErrorBoundary>
           <NextIntlClientProvider messages={messages}>
-            <NextAuthProvider>
-              <StateProvider>
-                <AuthProvider>
-                  <UserSyncProvider>
-                    <CurrencyProvider>{children}</CurrencyProvider>
-                    <PurchaseWidget />
-                  </UserSyncProvider>
-                </AuthProvider>
-              </StateProvider>
-            </NextAuthProvider>
+            <StateProvider>
+              <AuthProvider>
+                <UserSyncProvider>
+                  <CurrencyProvider>{children}</CurrencyProvider>
+                  <PurchaseWidget />
+                </UserSyncProvider>
+              </AuthProvider>
+            </StateProvider>
           </NextIntlClientProvider>
         </ErrorBoundary>
       </body>

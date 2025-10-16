@@ -18,7 +18,9 @@ const AdminProtectedRoute = ({
   fallbackPath = "/account",
   loadingMessage = "Checking admin permissions...",
 }: AdminProtectedRouteProps) => {
-  const { data: session, status } = useSession();
+  const sess = useSession() as | { data: any; status: "loading" | "authenticated" | "unauthenticated" } | undefined;
+  const session = sess?.data;
+  const status = (sess?.status ?? "loading") as "loading" | "authenticated" | "unauthenticated";
   const router = useRouter();
   const [isRedirecting, setIsRedirecting] = useState(false);
 
