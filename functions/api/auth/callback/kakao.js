@@ -68,7 +68,8 @@ export async function onRequest(context) {
         const usersTbl = await sql`SELECT to_regclass('public.users') as r`;
         const userTbl = await sql`SELECT to_regclass('public.user') as r`;
         const nm = name || 'Kakao User';
-        const em = email || null;
+        const providerUserId = String(profile.id);
+        const em = (email || null) ?? `kakao:${providerUserId}@noemail.local`;
         const img = image || null;
         if (usersTbl[0]?.r) {
           let rows;

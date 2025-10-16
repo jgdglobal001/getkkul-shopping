@@ -72,7 +72,8 @@ export async function onRequest(context) {
         const usersTbl = await sql`SELECT to_regclass('public.users') as r`;
         const userTbl = await sql`SELECT to_regclass('public.user') as r`;
         const nm = profile.name || profile.nickname || 'Naver User';
-        const em = profile.email || null;
+        const providerUserId = String(profile.id);
+        const em = (profile.email || null) ?? `naver:${providerUserId}@noemail.local`;
         const img = profile.profile_image || null;
         if (usersTbl[0]?.r) {
           let rows;
