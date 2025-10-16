@@ -42,7 +42,7 @@ export default async function middleware(request: any) {
   const response = nextIntlMiddleware(request);
 
   const { pathname } = request.nextUrl;
-  const session = await auth();
+  const session = await auth(request);
 
   // Extract locale from pathname
   const pathnameIsMissingLocale = ['ko', 'en', 'zh'].every(
@@ -59,7 +59,7 @@ export default async function middleware(request: any) {
     }
 
     // Check role-based access
-    const userRole = session.user.role as UserRole;
+    const userRole = (session.user.role || 'user') as UserRole;
 
     // Special explicit check for admin routes
     if (pathWithoutLocale.startsWith("/account/admin")) {
@@ -81,7 +81,7 @@ export default async function middleware(request: any) {
   // Step 3: Prevent access to auth pages for logged-in users
   if (authRoutes.some((route) => pathWithoutLocale.startsWith(route))) {
     if (session?.user) {
-      const userRole = session.user.role as UserRole;
+      const userRole = (session.user.role || 'user') as UserRole;
       const dashboardRoute = getDefaultDashboardRoute(userRole);
       return NextResponse.redirect(new URL(dashboardRoute, request.url));
     }
