@@ -88,9 +88,15 @@ export async function onRequest(context) {
         }
       };
 
-      return new Response(JSON.stringify({ 
-        stats: mockStats,
-        success: true 
+      // Return stats in the format expected by the frontend
+      return new Response(JSON.stringify({
+        totalUsers: mockStats.overview.totalCustomers,
+        totalOrders: mockStats.overview.totalOrders,
+        totalRevenue: mockStats.overview.totalRevenue,
+        totalProducts: mockStats.overview.totalProducts,
+        pendingOrders: mockStats.orderStatusDistribution.pending,
+        completedOrders: mockStats.orderStatusDistribution.delivered,
+        ...mockStats
       }), {
         headers: {
           'Content-Type': 'application/json',

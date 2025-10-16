@@ -1,14 +1,27 @@
-// Cloudflare Pages Functions middleware for Next.js API routes
+// Cloudflare Pages Functions middleware
 export async function onRequest(context) {
   const { request, next } = context;
   const url = new URL(request.url);
-  
-  // API 라우트 처리
-  if (url.pathname.startsWith('/api/')) {
-    // Next.js API 라우트로 프록시
-    return next();
+
+  // CORS headers for all API requests
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  };
+
+  // Handle preflight requests
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
   }
-  
-  // 정적 파일 및 페이지 처리
-  return next();
+
+  // Add CORS headers to all responses
+  const response = await next();
+
+  // Add CORS headers to the response
+  Object.entries(corsHeaders).forEach(([key, value]) => {
+    response.headers.set(key, value);
+  });
+
+  return response;
 }
