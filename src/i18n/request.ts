@@ -107,6 +107,8 @@ const koMessages = {
     "buyNow": "바로 구매",
     "outOfStock": "품절",
     "inStock": "재고 있음",
+    "availability": "재고 상태",
+    "onlyLeft": "{count}개 남음",
     "description": "제품 설명",
     "specifications": "제품 사양",
     "reviews": "리뷰",
@@ -131,7 +133,8 @@ const koMessages = {
     "removeItem": "상품 제거",
     "updateQuantity": "수량 업데이트",
     "item": "상품",
-    "items": "상품들"
+    "items": "상품들",
+    "inCart": "장바구니"
   },
   "checkout": {
     "paymentCancelled": "결제가 취소되었습니다",
@@ -419,6 +422,8 @@ const enMessages = {
     "buyNow": "Buy Now",
     "outOfStock": "Out of Stock",
     "inStock": "In Stock",
+    "availability": "Availability",
+    "onlyLeft": "Only {count} left!",
     "description": "Description",
     "specifications": "Specifications",
     "reviews": "Reviews",
@@ -443,7 +448,8 @@ const enMessages = {
     "removeItem": "Remove item",
     "updateQuantity": "Update quantity",
     "item": "item",
-    "items": "items"
+    "items": "items",
+    "inCart": "in cart"
   },
   "checkout": {
     "paymentCancelled": "Your payment has been cancelled",
@@ -731,6 +737,8 @@ const zhMessages = {
     "buyNow": "立即购买",
     "outOfStock": "缺货",
     "inStock": "有货",
+    "availability": "库存状态",
+    "onlyLeft": "仅剩 {count} 件！",
     "description": "产品描述",
     "specifications": "产品规格",
     "reviews": "评论",
@@ -755,7 +763,8 @@ const zhMessages = {
     "removeItem": "移除商品",
     "updateQuantity": "更新数量",
     "item": "商品",
-    "items": "商品"
+    "items": "商品",
+    "inCart": "购物车中"
   },
   "checkout": {
     "paymentCancelled": "支付已取消",

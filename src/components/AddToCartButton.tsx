@@ -11,6 +11,8 @@ import toast from "react-hot-toast";
 import { FaPlus, FaCheck } from "react-icons/fa6";
 import { FaMinus, FaShoppingCart } from "react-icons/fa";
 import { useEffect, useState } from "react";
+import { useTranslations } from 'next-intl';
+
 import { twMerge } from "tailwind-merge";
 
 interface PropsType {
@@ -28,6 +30,7 @@ const AddToCartButton = ({
   size = "md",
   showQuantity = true,
 }: PropsType) => {
+  const t = useTranslations();
   const dispatch = useDispatch();
   const { cart } = useSelector((state: StateType) => state?.getkkul);
   const [existingProduct, setExistingProduct] = useState<ProductType | null>(
@@ -61,7 +64,7 @@ const AddToCartButton = ({
       setTimeout(() => {
         setIsAdding(false);
         setJustAdded(true);
-        toast.success(`${product?.title.substring(0, 15)}... added to cart!`, {
+        toast.success(t('success.addedToCart'), {
           duration: 2000,
           style: {
             background: "#10B981",
@@ -73,7 +76,7 @@ const AddToCartButton = ({
         setTimeout(() => setJustAdded(false), 2000);
       }, 300);
     } else {
-      toast.error("Product is out of stock!", {
+      toast.error(t('product.outOfStock'), {
         style: {
           background: "#EF4444",
           color: "white",
@@ -155,7 +158,7 @@ const AddToCartButton = ({
           )}
         >
           <FaShoppingCart className="w-4 h-4" />
-          <span>Add to Cart</span>
+          <span>{t('product.addToCart')}</span>
         </button>
       </div>
     );
@@ -177,7 +180,7 @@ const AddToCartButton = ({
             <span className="text-sm font-semibold text-gray-800">
               {existingProduct?.quantity}
             </span>
-            <span className="text-xs text-gray-500">in cart</span>
+            <span className="text-xs text-gray-500">{t('cart.inCart')}</span>
           </div>
 
           <button
@@ -207,19 +210,19 @@ const AddToCartButton = ({
           {isAdding ? (
             <>
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              <span>Adding...</span>
+              <span>{t('common.loading')}</span>
             </>
           ) : justAdded ? (
             <>
               <FaCheck className="w-4 h-4" />
-              <span>Added!</span>
+              <span>{t('success.addedToCart')}</span>
             </>
           ) : isOutOfStock ? (
-            <span>Out of Stock</span>
+            <span>{t('product.outOfStock')}</span>
           ) : (
             <>
               <FaShoppingCart className="w-4 h-4" />
-              <span>Add to Cart</span>
+              <span>{t('product.addToCart')}</span>
             </>
           )}
 

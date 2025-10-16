@@ -5,6 +5,8 @@ import Link from "next/link";
 import ProductPrice from "./ProductPrice";
 import { FaStar, FaHeart, FaEye } from "react-icons/fa";
 
+import { useLocale, useTranslations } from 'next-intl';
+
 interface Props {
   product: ProductType;
   view?: "grid" | "list";
@@ -14,6 +16,8 @@ const EnhancedProductCard = ({ product, view = "grid" }: Props) => {
   const regularPrice = product?.price;
   const discountedPrice =
     product?.price - (product?.price * product?.discountPercentage) / 100;
+  const t = useTranslations();
+  const locale = useLocale();
 
   if (view === "list") {
     return (
@@ -23,7 +27,7 @@ const EnhancedProductCard = ({ product, view = "grid" }: Props) => {
           <div className="w-48 h-48 flex-shrink-0 relative group/image">
             <Link
               href={{
-                pathname: `/products/${product?.id}`,
+                pathname: `/${locale}/products/${product?.id}`,
                 query: { id: product?.id },
               }}
             >
@@ -36,14 +40,14 @@ const EnhancedProductCard = ({ product, view = "grid" }: Props) => {
 
             {product?.discountPercentage > 0 && (
               <div className="absolute top-3 left-3 bg-gradient-to-r from-red-500 to-red-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-                -{Math.round(product.discountPercentage)}% OFF
+                {t('offersPage.percentOffShort', { value: Math.round(product.discountPercentage) })}
               </div>
             )}
 
             {product?.stock === 0 && (
               <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                 <div className="bg-red-500 text-white px-3 py-2 rounded-lg font-bold text-sm">
-                  OUT OF STOCK
+                  {t('product.outOfStock')}
                 </div>
               </div>
             )}
@@ -65,7 +69,7 @@ const EnhancedProductCard = ({ product, view = "grid" }: Props) => {
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
                   <p className="text-sm text-gray-500 uppercase tracking-wide">
-                    {product?.category}
+                    {t(`categories.${product?.category}`)}
                   </p>
                   {product?.brand && (
                     <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full font-medium">
@@ -76,7 +80,7 @@ const EnhancedProductCard = ({ product, view = "grid" }: Props) => {
 
                 <Link
                   href={{
-                    pathname: `/products/${product?.id}`,
+                    pathname: `/${locale}/products/${product?.id}`,
                     query: { id: product?.id },
                   }}
                 >
@@ -103,8 +107,7 @@ const EnhancedProductCard = ({ product, view = "grid" }: Props) => {
                     ))}
                   </div>
                   <span className="text-sm text-gray-600">
-                    ({product?.rating}) • {product?.reviews?.length || 0}{" "}
-                    reviews
+                    ({product?.rating}) • {product?.reviews?.length || 0} {t('product.reviews')}
                   </span>
                 </div>
 
@@ -117,7 +120,7 @@ const EnhancedProductCard = ({ product, view = "grid" }: Props) => {
 
               <div className="flex flex-col justify-between items-end ml-6 min-w-[140px]">
                 <div className="text-right">
-                  <p className="text-sm text-gray-500 mb-1">Availability</p>
+                  <p className="text-sm text-gray-500 mb-1">{t('product.availability')}</p>
                   <div className="flex items-center gap-2">
                     <div
                       className={`w-2 h-2 rounded-full ${
@@ -138,8 +141,8 @@ const EnhancedProductCard = ({ product, view = "grid" }: Props) => {
                       }`}
                     >
                       {product?.stock > 0
-                        ? `${product.stock} in stock`
-                        : "Out of stock"}
+                        ? `${t('product.inStock')} (${product.stock})`
+                        : t('product.outOfStock')}
                     </p>
                   </div>
                 </div>
@@ -165,7 +168,7 @@ const EnhancedProductCard = ({ product, view = "grid" }: Props) => {
       <div className="relative aspect-square overflow-hidden bg-gray-50">
         <Link
           href={{
-            pathname: `/products/${product?.id}`,
+            pathname: `/${locale}/products/${product?.id}`,
             query: { id: product?.id },
           }}
         >
@@ -178,21 +181,21 @@ const EnhancedProductCard = ({ product, view = "grid" }: Props) => {
 
         {product?.discountPercentage > 0 && (
           <div className="absolute top-3 left-3 bg-gradient-to-r from-red-500 to-red-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-10 animate-pulse">
-            -{Math.round(product.discountPercentage)}% OFF
+            {t('offersPage.percentOffShort', { value: Math.round(product.discountPercentage) })}
           </div>
         )}
 
         {/* Stock Badge */}
         {product?.stock <= 5 && product?.stock > 0 && (
           <div className="absolute top-3 right-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg">
-            Only {product.stock} left!
+            {t('product.onlyLeft', { count: product.stock })}
           </div>
         )}
 
         {product?.stock === 0 && (
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
             <div className="bg-red-500 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-lg">
-              OUT OF STOCK
+              {t('product.outOfStock')}
             </div>
           </div>
         )}
@@ -212,7 +215,7 @@ const EnhancedProductCard = ({ product, view = "grid" }: Props) => {
       <div className="p-5">
         <div className="flex items-center justify-between mb-2">
           <p className="text-xs text-gray-500 uppercase tracking-wider font-medium">
-            {product?.category}
+            {t(`categories.${product?.category}`)}
           </p>
           {product?.brand && (
             <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full font-medium">
@@ -223,7 +226,7 @@ const EnhancedProductCard = ({ product, view = "grid" }: Props) => {
 
         <Link
           href={{
-            pathname: `/products/${product?.id}`,
+            pathname: `/${locale}/products/${product?.id}`,
             query: { id: product?.id },
           }}
         >
@@ -256,7 +259,7 @@ const EnhancedProductCard = ({ product, view = "grid" }: Props) => {
           {/* Stock Status */}
           {product?.stock > 0 && (
             <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full font-medium w-fit">
-              In Stock ({product.stock})
+              {t('product.inStock')} ({product.stock})
             </span>
           )}
         </div>

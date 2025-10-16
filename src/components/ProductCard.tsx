@@ -10,12 +10,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { useSession } from "next-auth/react";
 import { addToFavorite } from "@/redux/getkkulSlice";
 import toast from "react-hot-toast";
+import { useLocale, useTranslations } from 'next-intl';
+
 
 interface Props {
   product: ProductType;
 }
 
 const ProductCard = ({ product }: Props) => {
+  const t = useTranslations();
+  const locale = useLocale();
   const dispatch = useDispatch();
   const { data: session } = useSession();
   const { favorite } = useSelector((state: StateType) => state?.getkkul);
@@ -59,7 +63,7 @@ const ProductCard = ({ product }: Props) => {
       <div className="relative aspect-square overflow-hidden bg-gray-50">
         <Link
           href={{
-            pathname: `/products/${product?.id}`,
+            pathname: `/${locale}/products/${product?.id}`,
             query: { id: product?.id },
           }}
         >
@@ -72,21 +76,21 @@ const ProductCard = ({ product }: Props) => {
 
         {product?.discountPercentage > 0 && (
           <div className="absolute top-3 left-3 bg-gradient-to-r from-red-500 to-red-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-10 animate-pulse">
-            -{Math.round(product.discountPercentage)}% OFF
+            {t('offersPage.percentOffShort', { value: Math.round(product.discountPercentage) })}
           </div>
         )}
 
         {/* Stock Badge */}
         {product?.stock <= 5 && product?.stock > 0 && (
           <div className="absolute top-3 right-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg">
-            Only {product.stock} left!
+            {t('product.onlyLeft', { count: product.stock })}
           </div>
         )}
 
         {product?.stock === 0 && (
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
             <div className="bg-red-500 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-lg">
-              OUT OF STOCK
+              {t('product.outOfStock')}
             </div>
           </div>
         )}
@@ -106,7 +110,7 @@ const ProductCard = ({ product }: Props) => {
               )}
             </button>
             <Link
-              href={`/products/${product.id}`}
+              href={`/${locale}/products/${product.id}`}
               className="p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-blue-50 hover:text-blue-500 transform hover:scale-110 transition-all duration-200"
               title="View details"
             >
@@ -120,7 +124,7 @@ const ProductCard = ({ product }: Props) => {
       <div className="p-5">
         <div className="flex items-center justify-between mb-2">
           <p className="text-xs text-gray-500 uppercase tracking-wider font-medium">
-            {product?.category}
+            {t(`categories.${product?.category}`)}
           </p>
           {product?.brand && (
             <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full font-medium">
@@ -131,7 +135,7 @@ const ProductCard = ({ product }: Props) => {
 
         <Link
           href={{
-            pathname: `/products/${product?.id}`,
+            pathname: `/${locale}/products/${product?.id}`,
             query: { id: product?.id },
           }}
         >
@@ -162,7 +166,7 @@ const ProductCard = ({ product }: Props) => {
 
           {product?.stock > 0 && (
             <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full font-medium">
-              In Stock
+              {t('product.inStock')}
             </span>
           )}
         </div>
