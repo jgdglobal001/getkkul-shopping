@@ -1,0 +1,35 @@
+# Redirects for Cloudflare Pages
+
+# API routes - 가장 먼저 처리
+/api/* /api/:splat 200
+
+# Admin redirects
+/admin /admin-dashboard 301
+/admin/* /admin-dashboard/:splat 301
+
+# Authentication redirects
+/login /auth/signin 301
+/register /auth/register 301
+/signup /auth/register 301
+
+# Legacy routes (if any)
+/dashboard /user-dashboard 301
+/profile /account 301
+
+# Handle trailing slashes
+/admin-dashboard/ /admin-dashboard 301
+/user-dashboard/ /user-dashboard 301
+/account-dashboard/ /account-dashboard 301
+/packer-dashboard/ /packer-dashboard 301
+/delivery-dashboard/ /delivery-dashboard 301
+
+# Next.js App Router 라우팅
+/ko/* /ko/:splat 200
+/en/* /en/:splat 200
+/zh/* /zh/:splat 200
+
+# 루트 경로 처리
+/ /ko 302
+
+# Fallback for SPA routing - 가장 마지막에 위치
+/* /index.html 200

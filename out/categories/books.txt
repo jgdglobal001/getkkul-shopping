@@ -1,0 +1,7 @@
+Books Category
+fiction
+non-fiction
+educational
+children-books
+comics
+magazines

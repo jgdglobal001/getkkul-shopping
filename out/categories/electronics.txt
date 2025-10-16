@@ -1,0 +1,9 @@
+Electronics Category
+smartphones
+laptops
+tablets
+smartwatches
+headphones
+cameras
+gaming-consoles
+audio-equipment

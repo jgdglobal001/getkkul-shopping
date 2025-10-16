@@ -66,17 +66,21 @@ export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({
   const [exchangeRates, setExchangeRates] =
     useState<Record<CurrencyCode, number>>(mockExchangeRates);
 
-  // Load saved currency from localStorage
+  // Load saved currency from localStorage (client-side only)
   useEffect(() => {
-    const savedCurrency = localStorage.getItem("selectedCurrency");
-    if (savedCurrency && currencyData[savedCurrency as CurrencyCode]) {
-      setSelectedCurrency(savedCurrency as CurrencyCode);
+    if (typeof window !== "undefined") {
+      const savedCurrency = localStorage.getItem("selectedCurrency");
+      if (savedCurrency && currencyData[savedCurrency as CurrencyCode]) {
+        setSelectedCurrency(savedCurrency as CurrencyCode);
+      }
     }
   }, []);
 
   const setCurrency = (currency: CurrencyCode) => {
     setSelectedCurrency(currency);
-    localStorage.setItem("selectedCurrency", currency);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("selectedCurrency", currency);
+    }
   };
 
   const convertPrice = (
