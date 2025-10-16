@@ -1,6 +1,5 @@
 "use client";
 import { Session } from "next-auth";
-import { signOut } from "next-auth/react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { useLocale } from 'next-intl';
@@ -42,13 +41,8 @@ const SignOutButton = ({ session }: Props) => {
         });
       }
 
-      // Sign out through NextAuth
-      await signOut({
-        callbackUrl: `/${locale}`,
-        redirect: true,
-      });
-
-      toast.success("Logged out successfully!");
+      // Clear our server session
+      window.location.href = `/api/auth/signout?redirect=/${locale}`;
     } catch (error) {
       console.error("Error during sign out:", error);
       toast.error("Error occurred during logout");

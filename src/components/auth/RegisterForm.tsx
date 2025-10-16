@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+// import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 // import { FaKakao, FaGoogle } from "react-icons/fa";
@@ -16,14 +16,8 @@ export default function RegisterForm() {
   const router = useRouter();
 
   const handleSocialSignIn = async (provider: "kakao" | "naver" | "google") => {
-    setIsLoading(true);
-    try {
-      await signIn(provider, { callbackUrl: "/" });
-    } catch (error) {
-      toast.error("소셜 로그인에 실패했습니다");
-    } finally {
-      setIsLoading(false);
-    }
+    const cb = `/${locale}`;
+    window.location.href = `/api/auth/signin?provider=${provider}&callback=${encodeURIComponent(cb)}`;
   };
 
   return (

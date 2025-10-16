@@ -16,9 +16,15 @@ export async function onRequest(context) {
   }
 
   try {
-    // For static build, return empty session
     if (method === 'GET') {
-      return new Response(JSON.stringify({}), {
+      // Read session cookie
+      const cookieHeader = request.headers.get('Cookie') || '';
+      const m = cookieHeader.match(/app_session=([^;]+)/);
+      let session = {};
+      if (m) {
+        try { session = JSON.parse(atob(m[1])); } catch {}
+      }
+      return new Response(JSON.stringify(session), {
         headers: {
           'Content-Type': 'application/json',
           ...corsHeaders,

@@ -45,15 +45,8 @@ export default function SignInForm() {
   };
 
   const handleOAuthSignIn = async (provider: "google" | "kakao" | "naver") => {
-    try {
-      await authClient.signIn.social({
-        provider,
-        callbackURL: "/",
-      });
-    } catch (error) {
-      console.error("OAuth sign in failed:", error);
-      toast.error("소셜 로그인에 실패했습니다.");
-    }
+    const cb = `/${locale}`;
+    window.location.href = `/api/auth/signin?provider=${provider}&callback=${encodeURIComponent(cb)}`;
   };
 
   return (

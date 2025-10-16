@@ -30,6 +30,10 @@
 # RSC flight payload for locale root: map /:locale/index.txt -> /:locale.txt
 /:locale/index.txt /:locale.txt 200
 
+/ko/index.txt /ko.txt 200
+/en/index.txt /en.txt 200
+/zh/index.txt /zh.txt 200
+
 
 # 루트 경로 처리
 / /ko 302
