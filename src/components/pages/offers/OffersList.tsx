@@ -6,6 +6,7 @@ import EnhancedProductCard from "../../EnhancedProductCard";
 import ProductSkeleton from "../../ProductSkeleton";
 import { FiFilter, FiGrid, FiList, FiChevronDown } from "react-icons/fi";
 import { ProductType } from "../../../../type";
+import { useLocale, useTranslations } from 'next-intl';
 
 interface OffersListProps {
   products: ProductType[];
@@ -28,6 +29,8 @@ const OffersList: React.FC<OffersListProps> = ({
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const locale = useLocale();
+  const t = useTranslations();
 
   const handleSortChange = (sortValue: string) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
@@ -38,7 +41,7 @@ const OffersList: React.FC<OffersListProps> = ({
     }
     const search = current.toString();
     const query = search ? `?${search}` : "";
-    router.push(`/offers${query}`);
+    router.push(`/${locale}/offers${query}`);
   };
 
   const handleCategoryFilter = (category: string) => {
@@ -50,7 +53,7 @@ const OffersList: React.FC<OffersListProps> = ({
     }
     const search = current.toString();
     const query = search ? `?${search}` : "";
-    router.push(`/offers${query}`);
+    router.push(`/${locale}/offers${query}`);
   };
 
   const handleDiscountFilter = (minDiscount: string) => {
@@ -62,11 +65,11 @@ const OffersList: React.FC<OffersListProps> = ({
     }
     const search = current.toString();
     const query = search ? `?${search}` : "";
-    router.push(`/offers${query}`);
+    router.push(`/${locale}/offers${query}`);
   };
 
   const clearAllFilters = () => {
-    router.push("/offers");
+    router.push(`/${locale}/offers`);
   };
 
   const loadMore = () => {
@@ -89,14 +92,14 @@ const OffersList: React.FC<OffersListProps> = ({
           {/* Results Count */}
           <div className="flex items-center gap-4">
             <h3 className="text-lg font-semibold text-gray-900">
-              {products.length} Offers Found
+              {products.length} {t('offersPage.offersFound')}
             </h3>
             {(currentCategory || currentMinDiscount) && (
               <button
                 onClick={clearAllFilters}
                 className="text-sm text-blue-600 hover:text-blue-700 underline"
               >
-                Clear All Filters
+                {t('offersPage.clearAllFilters')}
               </button>
             )}
           </div>
@@ -109,7 +112,7 @@ const OffersList: React.FC<OffersListProps> = ({
               className="lg:hidden flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
             >
               <FiFilter className="w-4 h-4" />
-              Filters
+              {t('offersPage.filters')}
             </button>
 
             {/* View Mode Toggle */}
@@ -142,12 +145,12 @@ const OffersList: React.FC<OffersListProps> = ({
               onChange={(e) => handleSortChange(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="discount-high">Highest Discount</option>
-              <option value="discount-low">Lowest Discount</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-              <option value="name-asc">Name: A to Z</option>
-              <option value="rating">Highest Rated</option>
+              <option value="discount-high">{t('offersPage.sortHighestDiscount')}</option>
+              <option value="discount-low">{t('offersPage.sortLowestDiscount')}</option>
+              <option value="price-low">{t('offersPage.sortPriceLow')}</option>
+              <option value="price-high">{t('offersPage.sortPriceHigh')}</option>
+              <option value="name-asc">{t('offersPage.sortNameAsc')}</option>
+              <option value="rating">{t('offersPage.sortHighestRated')}</option>
             </select>
           </div>
         </div>
@@ -162,14 +165,14 @@ const OffersList: React.FC<OffersListProps> = ({
             {/* Category Filter */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Category
+                {t('offersPage.category')}
               </label>
               <select
                 value={currentCategory || "all"}
                 onChange={(e) => handleCategoryFilter(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="all">All Categories</option>
+                <option value="all">{t('offersPage.allCategories')}</option>
                 {categories.map((category) => (
                   <option key={category} value={category}>
                     {category.charAt(0).toUpperCase() + category.slice(1)}
@@ -181,19 +184,17 @@ const OffersList: React.FC<OffersListProps> = ({
             {/* Discount Filter */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Minimum Discount
+                {t('offersPage.minimumDiscount')}
               </label>
               <select
                 value={currentMinDiscount || "0"}
                 onChange={(e) => handleDiscountFilter(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="0">Any Discount</option>
-                <option value="10">10% or more</option>
-                <option value="20">20% or more</option>
-                <option value="30">30% or more</option>
-                <option value="40">40% or more</option>
-                <option value="50">50% or more</option>
+                <option value="0">{t('offersPage.anyDiscount')}</option>
+                {[10,20,30,40,50].map((v) => (
+                  <option key={v} value={v.toString()}>{t('offersPage.percentOrMore', { value: v })}</option>
+                ))}
               </select>
             </div>
 
@@ -212,7 +213,7 @@ const OffersList: React.FC<OffersListProps> = ({
               )}
               {currentMinDiscount && (
                 <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">
-                  {currentMinDiscount}%+ off
+                  {t('offersPage.percentOffShort', { value: currentMinDiscount })}
                   <button
                     onClick={() => handleDiscountFilter("0")}
                     className="text-green-600 hover:text-green-800"
@@ -263,7 +264,7 @@ const OffersList: React.FC<OffersListProps> = ({
                 onClick={loadMore}
                 className="mx-auto block px-8 py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300"
               >
-                Load More Offers
+                {t('offersPage.loadMoreOffers')}
               </motion.button>
             </div>
           )}
@@ -272,16 +273,16 @@ const OffersList: React.FC<OffersListProps> = ({
         <div className="text-center py-12">
           <div className="text-6xl mb-4">🔍</div>
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            No offers found
+            {t('offersPage.noOffers')}
           </h3>
           <p className="text-gray-600 mb-4">
-            Try adjusting your filters or check back later for new deals.
+            {t('offersPage.adjustFilters')}
           </p>
           <button
             onClick={clearAllFilters}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg"
           >
-            Clear Filters
+            {t('offersPage.clearFilters')}
           </button>
         </div>
       )}

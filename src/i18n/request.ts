@@ -284,6 +284,34 @@ const koMessages = {
     "browseAllOrSearch": "전체 상품을 보거나 검색 기능을 이용해 원하는 상품을 찾아보세요.",
     "viewAllProducts": "모든 상품 보기",
     "searchProducts": "상품 검색"
+  },
+  "offersPage": {
+    "productsOnSale": "할인 중인 상품",
+    "averageDiscount": "평균 할인율",
+    "maximumDiscount": "최대 할인율",
+    "limitedTime": "한정 기간",
+    "exclusiveDeals": "단독 특가",
+    "megaSaleTitle": "메가 세일 이벤트!",
+    "megaSaleSubtitle": "서두르세요! 이번 특가는 오래가지 않습니다.",
+    "offersFound": "특가 상품",
+    "filters": "필터",
+    "clearAllFilters": "모두 지우기",
+    "sortHighestDiscount": "할인율 높은순",
+    "sortLowestDiscount": "할인율 낮은순",
+    "sortPriceLow": "가격 낮은순",
+    "sortPriceHigh": "가격 높은순",
+    "sortNameAsc": "이름: 가→나",
+    "sortHighestRated": "평점 높은순",
+    "category": "카테고리",
+    "minimumDiscount": "최소 할인율",
+    "allCategories": "모든 카테고리",
+    "anyDiscount": "상관없음",
+    "percentOrMore": "{value}% 이상",
+    "percentOffShort": "{value}%+ 할인",
+    "loadMoreOffers": "특가 더 보기",
+    "noOffers": "특가 상품을 찾을 수 없습니다",
+    "adjustFilters": "필터를 조정하거나 나중에 다시 확인해 보세요.",
+    "clearFilters": "필터 지우기"
   }
 };
 
@@ -568,6 +596,34 @@ const enMessages = {
     "browseAllOrSearch": "Browse all our products or use our search feature to find exactly what you need.",
     "viewAllProducts": "View All Products",
     "searchProducts": "Search Products"
+  },
+  "offersPage": {
+    "productsOnSale": "Products on Sale",
+    "averageDiscount": "Average Discount",
+    "maximumDiscount": "Maximum Discount",
+    "limitedTime": "Limited Time",
+    "exclusiveDeals": "Exclusive Deals",
+    "megaSaleTitle": "Mega Sale Event!",
+    "megaSaleSubtitle": "Hurry up! These amazing deals won't last forever.",
+    "offersFound": "Offers Found",
+    "filters": "Filters",
+    "clearAllFilters": "Clear All Filters",
+    "sortHighestDiscount": "Highest Discount",
+    "sortLowestDiscount": "Lowest Discount",
+    "sortPriceLow": "Price: Low to High",
+    "sortPriceHigh": "Price: High to Low",
+    "sortNameAsc": "Name: A to Z",
+    "sortHighestRated": "Highest Rated",
+    "category": "Category",
+    "minimumDiscount": "Minimum Discount",
+    "allCategories": "All Categories",
+    "anyDiscount": "Any Discount",
+    "percentOrMore": "{value}% or more",
+    "percentOffShort": "{value}%+ off",
+    "loadMoreOffers": "Load More Offers",
+    "noOffers": "No offers found",
+    "adjustFilters": "Try adjusting your filters or check back later for new deals.",
+    "clearFilters": "Clear Filters"
   }
 };
 
@@ -852,6 +908,34 @@ const zhMessages = {
     "browseAllOrSearch": "浏览我们所有的产品或使用我们的搜索功能找到您需要的东西。",
     "viewAllProducts": "查看所有产品",
     "searchProducts": "搜索产品"
+  },
+  "offersPage": {
+    "productsOnSale": "促销商品",
+    "averageDiscount": "平均折扣",
+    "maximumDiscount": "最大折扣",
+    "limitedTime": "限时",
+    "exclusiveDeals": "独家优惠",
+    "megaSaleTitle": "超级促销活动！",
+    "megaSaleSubtitle": "抓紧时间！这些超值优惠不会持续太久。",
+    "offersFound": "特价",
+    "filters": "筛选",
+    "clearAllFilters": "清除所有筛选",
+    "sortHighestDiscount": "折扣最高",
+    "sortLowestDiscount": "折扣最低",
+    "sortPriceLow": "价格：从低到高",
+    "sortPriceHigh": "价格：从高到低",
+    "sortNameAsc": "名称：A 到 Z",
+    "sortHighestRated": "评分最高",
+    "category": "类别",
+    "minimumDiscount": "最低折扣",
+    "allCategories": "所有类别",
+    "anyDiscount": "不限",
+    "percentOrMore": "{value}% 及以上",
+    "percentOffShort": "{value}%+ 优惠",
+    "loadMoreOffers": "加载更多特价",
+    "noOffers": "未找到特价",
+    "adjustFilters": "尝试调整筛选条件或稍后再来查看新优惠。",
+    "clearFilters": "清除筛选"
   }
 };
 

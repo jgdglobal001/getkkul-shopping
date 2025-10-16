@@ -4,7 +4,7 @@ import OffersHero from "@/components/pages/offers/OffersHero";
 import { ProductType } from "../../../../../type";
 import OffersList from "@/components/pages/offers/OffersList";
 import Link from "next/link";
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, getLocale } from 'next-intl/server';
 
 export const metadata = {
   title: "Special Offers - Shofy",
@@ -15,6 +15,7 @@ export const metadata = {
 const OffersPage = async () => {
   // 정적 빌드를 위해 searchParams 제거
   const t = await getTranslations();
+  const locale = await getLocale();
 
   // Fetch all products
   const productsData = await getData(`https://dummyjson.com/products?limit=0`);
@@ -66,7 +67,7 @@ const OffersPage = async () => {
         <nav className="text-sm">
           <ol className="flex items-center justify-center space-x-2 text-gray-500">
             <li>
-              <Link href="/" className="hover:text-gray-700 transition-colors">
+              <Link href={`/${locale}/`} className="hover:text-gray-700 transition-colors">
                 {t('common.home')}
               </Link>
             </li>
