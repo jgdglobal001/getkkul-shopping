@@ -61,30 +61,38 @@ export async function onRequest(context) {
       issuedAt: Date.now(),
     };
 
-    // Upsert user into Neon Postgres
+    // Upsert user into Neon Postgres (adapt to existing schema)
     try {
       if (env.DATABASE_URL) {
         const sql = neon(env.DATABASE_URL);
-        await sql`CREATE TABLE IF NOT EXISTS users (
-          id TEXT PRIMARY KEY,
-          provider TEXT NOT NULL,
-          provider_user_id TEXT NOT NULL,
-          name TEXT,
-          email TEXT,
-          image TEXT,
-          created_at TIMESTAMPTZ DEFAULT now(),
-          last_login TIMESTAMPTZ DEFAULT now()
-        )`;
-        const uid = `kakao:${String(profile.id)}`;
-        await sql`
-          INSERT INTO users (id, provider, provider_user_id, name, email, image)
-          VALUES (${uid}, 'kakao', ${String(profile.id)}, ${name}, ${email}, ${image})
-          ON CONFLICT (id) DO UPDATE SET
-            name = EXCLUDED.name,
-            email = EXCLUDED.email,
-            image = EXCLUDED.image,
-            last_login = now();
-        `;
+        const usersTbl = await sql`SELECT to_regclass('public.users') as r`;
+        const userTbl = await sql`SELECT to_regclass('public.user') as r`;
+        const nm = name || 'Kakao User';
+        const em = email || null;
+        const img = image || null;
+        if (usersTbl[0]?.r) {
+          const rows = await sql`
+            INSERT INTO "users" (name, email, image, provider, profile)
+            VALUES (${nm}, ${em}, ${img}, 'kakao', ${sql.json(profile)})
+            ON CONFLICT (email) DO UPDATE SET
+              name = EXCLUDED.name,
+              image = EXCLUDED.image,
+              provider = 'kakao',
+              profile = EXCLUDED.profile,
+              updatedAt = now()
+            RETURNING id;
+          `;
+          if (rows?.[0]?.id) session.user.role = session.user.role || 'user';
+        } else if (userTbl[0]?.r) {
+          await sql`
+            INSERT INTO "user" (name, email, image)
+            VALUES (${nm}, ${em}, ${img})
+            ON CONFLICT (email) DO UPDATE SET
+              name = EXCLUDED.name,
+              image = EXCLUDED.image,
+              updatedAt = now();
+          `;
+        }
       }
     } catch (dbErr) {
       console.error('kakao upsert error', dbErr);

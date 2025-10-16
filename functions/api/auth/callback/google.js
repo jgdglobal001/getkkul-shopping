@@ -56,30 +56,41 @@ export async function onRequest(context) {
       issuedAt: Date.now(),
     };
 
-    // Upsert user into Neon Postgres
+    // Upsert user into Neon Postgres (adapt to existing schema)
     try {
       if (env.DATABASE_URL) {
         const sql = neon(env.DATABASE_URL);
-        await sql`CREATE TABLE IF NOT EXISTS users (
-          id TEXT PRIMARY KEY,
-          provider TEXT NOT NULL,
-          provider_user_id TEXT NOT NULL,
-          name TEXT,
-          email TEXT,
-          image TEXT,
-          created_at TIMESTAMPTZ DEFAULT now(),
-          last_login TIMESTAMPTZ DEFAULT now()
-        )`;
-        const uid = `google:${profile.sub}`;
-        await sql`
-          INSERT INTO users (id, provider, provider_user_id, name, email, image)
-          VALUES (${uid}, 'google', ${profile.sub}, ${profile.name}, ${profile.email}, ${profile.picture})
-          ON CONFLICT (id) DO UPDATE SET
-            name = EXCLUDED.name,
-            email = EXCLUDED.email,
-            image = EXCLUDED.image,
-            last_login = now();
-        `;
+        // Detect tables
+        const usersTbl = await sql`SELECT to_regclass('public.users') as r`;
+        const userTbl = await sql`SELECT to_regclass('public.user') as r`;
+        const name = profile.name || 'Google User';
+        const email = profile.email || null;
+        const image = profile.picture || null;
+        if (usersTbl[0]?.r) {
+          // App schema: public.users (UUID PK, email UNIQUE)
+          const rows = await sql`
+            INSERT INTO "users" (name, email, image, provider, profile)
+            VALUES (${name}, ${email}, ${image}, 'google', ${sql.json(profile)})
+            ON CONFLICT (email) DO UPDATE SET
+              name = EXCLUDED.name,
+              image = EXCLUDED.image,
+              provider = 'google',
+              profile = EXCLUDED.profile,
+              updatedAt = now()
+            RETURNING id;
+          `;
+          if (rows?.[0]?.id) session.user.role = session.user.role || 'user';
+        } else if (userTbl[0]?.r) {
+          // NextAuth-like schema: public.user (UUID PK, email UNIQUE)
+          await sql`
+            INSERT INTO "user" (name, email, image)
+            VALUES (${name}, ${email}, ${image})
+            ON CONFLICT (email) DO UPDATE SET
+              name = EXCLUDED.name,
+              image = EXCLUDED.image,
+              updatedAt = now();
+          `;
+        } // else: no known table, skip
       }
     } catch (dbErr) {
       console.error('google upsert error', dbErr);
