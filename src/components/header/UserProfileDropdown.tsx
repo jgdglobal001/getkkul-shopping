@@ -10,7 +10,7 @@ import {
   FaSignOutAlt,
   FaShieldAlt,
 } from "react-icons/fa";
-import { signOut } from "next-auth/react";
+
 
 interface UserProfileDropdownProps {
   user: {
@@ -72,7 +72,9 @@ const UserProfileDropdown = ({ user }: UserProfileDropdownProps) => {
   };
 
   const handleSignOut = () => {
-    signOut({ callbackUrl: "/" });
+    if (typeof window !== "undefined") {
+      window.location.href = "/api/auth/signout";
+    }
   };
 
   const toggleDropdown = () => {

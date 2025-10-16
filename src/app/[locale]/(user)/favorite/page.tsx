@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useSession } from "next-auth/react";
+import { useAppSession as useSession } from "@/hooks/useAppSession";
 import { StateType } from "../../../../../type";
 import { addToFavorite, addToCart, resetFavorite } from "@/redux/getkkulSlice";
 import Container from "@/components/Container";

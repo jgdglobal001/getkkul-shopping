@@ -1,5 +1,4 @@
 "use client";
-import { Session } from "next-auth";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { useLocale } from 'next-intl';

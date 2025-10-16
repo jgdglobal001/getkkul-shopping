@@ -6,7 +6,7 @@ import Link from "next/link";
 import { FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
 import { SiKakao, SiNaver } from "react-icons/si";
 import { toast } from "react-hot-toast";
-import { signIn } from "next-auth/react";
+
 import { useLocale } from 'next-intl';
 
 
