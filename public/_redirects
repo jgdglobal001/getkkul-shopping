@@ -27,6 +27,9 @@
 /ko/* /ko/:splat 200
 /en/* /en/:splat 200
 /zh/* /zh/:splat 200
+# RSC flight payload for locale root: map /:locale/index.txt -> /:locale.txt
+/:locale/index.txt /:locale.txt 200
+
 
 # 루트 경로 처리
 / /ko 302
