@@ -8,6 +8,9 @@
 .next/static/chunks/
 /.open-next/
 
+# Build output
+/out
+
 # Environment variables
 .env
 .env.local
