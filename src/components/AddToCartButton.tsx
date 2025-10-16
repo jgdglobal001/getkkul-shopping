@@ -35,15 +35,22 @@ const AddToCartButton = ({
   );
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isClient) return;
+
     const availableProduct = cart?.find((item) => item?.id === product?.id);
     if (availableProduct) {
       setExistingProduct(availableProduct);
     } else {
       setExistingProduct(null);
     }
-  }, [cart, product]);
+  }, [cart, product, isClient]);
 
   const handleAddToCart = async () => {
     if (product && product.stock > 0) {
@@ -134,6 +141,25 @@ const AddToCartButton = ({
 
   // Check if product is out of stock
   const isOutOfStock = !product?.stock || product.stock <= 0;
+
+  // Show static version during SSR
+  if (!isClient) {
+    return (
+      <div className="w-full">
+        <button
+          disabled
+          className={twMerge(
+            "relative flex items-center justify-center gap-2 rounded-lg font-medium transition-all duration-300 transform disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden",
+            "bg-theme-color/80 text-white px-4 py-2 text-base",
+            className
+          )}
+        >
+          <FaShoppingCart className="w-4 h-4" />
+          <span>Add to Cart</span>
+        </button>
+      </div>
+    );
+  }
 
   return (
     <>
