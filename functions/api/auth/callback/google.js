@@ -68,17 +68,49 @@ export async function onRequest(context) {
         const image = profile.picture || null;
         if (usersTbl[0]?.r) {
           // App schema: public.users (UUID PK, email UNIQUE)
-          const rows = await sql`
-            INSERT INTO "users" (name, email, image, provider, profile)
-            VALUES (${name}, ${email}, ${image}, 'google', ${sql.json(profile)})
-            ON CONFLICT (email) DO UPDATE SET
-              name = EXCLUDED.name,
-              image = EXCLUDED.image,
-              provider = 'google',
-              profile = EXCLUDED.profile,
-              updatedAt = now()
-            RETURNING id;
-          `;
+          let rows;
+          try {
+            rows = await sql`
+              INSERT INTO "users" (name, email, image, provider, profile)
+              VALUES (${name}, ${email}, ${image}, 'google', ${sql.json(profile)})
+              ON CONFLICT (email) DO UPDATE SET
+                name = EXCLUDED.name,
+                image = EXCLUDED.image,
+                provider = 'google',
+                profile = EXCLUDED.profile,
+                updatedAt = now()
+              RETURNING id;
+            `;
+          } catch (e) {
+            console.error('users upsert (extended) failed, falling back', e);
+            try {
+              rows = await sql`
+                INSERT INTO "users" (name, email, image)
+                VALUES (${name}, ${email}, ${image})
+                ON CONFLICT (email) DO UPDATE SET
+                  name = EXCLUDED.name,
+                  image = EXCLUDED.image,
+                  updatedAt = now()
+                RETURNING id;
+              `;
+            } catch (e2) {
+              console.error('users upsert (basic) failed, second fallback', e2);
+              try {
+                rows = await sql`
+                  INSERT INTO "users" (name, email)
+                  VALUES (${name}, ${email})
+                  ON CONFLICT (email) DO NOTHING
+                  RETURNING id;
+                `;
+                if (!rows?.length && email != null) {
+                  rows = await sql`SELECT id FROM "users" WHERE email = ${email} LIMIT 1;`;
+                }
+              } catch (e3) {
+                console.error('users upsert (minimal) failed', e3);
+                rows = [];
+              }
+            }
+          }
           const userId = rows?.[0]?.id;
           if (userId) {
             session.user.role = session.user.role || 'user';
@@ -86,7 +118,7 @@ export async function onRequest(context) {
             // Ensure oauth_accounts table exists
             await sql`
               CREATE TABLE IF NOT EXISTS oauth_accounts (
-                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                id TEXT PRIMARY KEY,
                 user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
                 provider TEXT NOT NULL,
                 provider_user_id TEXT NOT NULL,
@@ -99,8 +131,8 @@ export async function onRequest(context) {
               )`;
             const expiresAt = token?.expires_in ? new Date(Date.now() + (Number(token.expires_in) || 0) * 1000).toISOString() : null;
             await sql`
-              INSERT INTO oauth_accounts (user_id, provider, provider_user_id, access_token, refresh_token, scope, token_type, expires_at)
-              VALUES (${userId}, 'google', ${profile.sub}, ${token.access_token || null}, ${token.refresh_token || null}, ${token.scope || null}, ${token.token_type || null}, ${expiresAt})
+              INSERT INTO oauth_accounts (id, user_id, provider, provider_user_id, access_token, refresh_token, scope, token_type, expires_at)
+              VALUES (${`google:${profile.sub}`}, ${userId}, 'google', ${profile.sub}, ${token.access_token || null}, ${token.refresh_token || null}, ${token.scope || null}, ${token.token_type || null}, ${expiresAt})
               ON CONFLICT (provider, provider_user_id) DO UPDATE SET
                 user_id = EXCLUDED.user_id,
                 access_token = EXCLUDED.access_token,
