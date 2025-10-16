@@ -20,18 +20,25 @@ const ProductCard = ({ product }: Props) => {
   const { data: session } = useSession();
   const { favorite } = useSelector((state: StateType) => state?.getkkul);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   const regularPrice = product?.price;
   const discountedPrice =
     product?.price - (product?.price * product?.discountPercentage) / 100;
 
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   // Check if product is in favorites
   useEffect(() => {
+    if (!isClient) return;
+
     if (session?.user) {
       const isInFavorites = favorite?.some((item) => item.id === product.id);
       setIsFavorite(!!isInFavorites);
     }
-  }, [favorite, product.id, session?.user]);
+  }, [favorite, product.id, session?.user, isClient]);
 
   const handleFavoriteClick = () => {
     if (session?.user) {
@@ -84,27 +91,29 @@ const ProductCard = ({ product }: Props) => {
           </div>
         )}
 
-        {/* Quick Actions */}
-        <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
-          <button
-            onClick={handleFavoriteClick}
-            className="p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-red-50 hover:text-red-500 transform hover:scale-110 transition-all duration-200"
-            title={isFavorite ? "Remove from favorites" : "Add to favorites"}
-          >
-            {isFavorite ? (
-              <MdFavorite className="w-4 h-4 text-red-500" />
-            ) : (
-              <MdFavoriteBorder className="w-4 h-4" />
-            )}
-          </button>
-          <Link
-            href={`/products/${product.id}`}
-            className="p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-blue-50 hover:text-blue-500 transform hover:scale-110 transition-all duration-200"
-            title="View details"
-          >
-            <FaEye className="w-4 h-4" />
-          </Link>
-        </div>
+        {/* Quick Actions - Only show on client */}
+        {isClient && (
+          <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
+            <button
+              onClick={handleFavoriteClick}
+              className="p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-red-50 hover:text-red-500 transform hover:scale-110 transition-all duration-200"
+              title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+            >
+              {isFavorite ? (
+                <MdFavorite className="w-4 h-4 text-red-500" />
+              ) : (
+                <MdFavoriteBorder className="w-4 h-4" />
+              )}
+            </button>
+            <Link
+              href={`/products/${product.id}`}
+              className="p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-blue-50 hover:text-blue-500 transform hover:scale-110 transition-all duration-200"
+              title="View details"
+            >
+              <FaEye className="w-4 h-4" />
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Content Section */}

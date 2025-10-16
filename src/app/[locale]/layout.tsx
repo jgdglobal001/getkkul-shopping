@@ -51,16 +51,14 @@ export default async function LocaleLayout({
         <ErrorBoundary>
           <NextIntlClientProvider messages={messages}>
             <NextAuthProvider>
-              <ClientOnly>
-                <StateProvider>
-                  <AuthProvider>
-                    <UserSyncProvider>
-                      <CurrencyProvider>{children}</CurrencyProvider>
-                      <PurchaseWidget />
-                    </UserSyncProvider>
-                  </AuthProvider>
-                </StateProvider>
-              </ClientOnly>
+              <StateProvider>
+                <AuthProvider>
+                  <UserSyncProvider>
+                    <CurrencyProvider>{children}</CurrencyProvider>
+                    <PurchaseWidget />
+                  </UserSyncProvider>
+                </AuthProvider>
+              </StateProvider>
             </NextAuthProvider>
           </NextIntlClientProvider>
         </ErrorBoundary>
