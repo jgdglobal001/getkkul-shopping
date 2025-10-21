@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && next-sitemap && mkdir -p out/functions && cp -R functions/* out/functions && cp -f _worker.js out/_worker.js",
+    "build": "next build && next-sitemap",
     "start": "next start",
     "lint": "next lint",
 
