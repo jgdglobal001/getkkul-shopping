@@ -46,7 +46,8 @@ export default function SignInForm() {
 
   const handleOAuthSignIn = async (provider: "google" | "kakao" | "naver") => {
     const cb = `/${locale}`;
-    window.location.href = `/api/auth/signin?provider=${provider}&callback=${encodeURIComponent(cb)}`;
+    const target = new URL(`/api/auth/signin?provider=${provider}&callback=${encodeURIComponent(cb)}`, window.location.origin).toString();
+    window.location.assign(target);
   };
 
   return (

@@ -17,7 +17,8 @@ export default function RegisterForm() {
 
   const handleSocialSignIn = async (provider: "kakao" | "naver" | "google") => {
     const cb = `/${locale}`;
-    window.location.href = `/api/auth/signin?provider=${provider}&callback=${encodeURIComponent(cb)}`;
+    const target = new URL(`/api/auth/signin?provider=${provider}&callback=${encodeURIComponent(cb)}`, window.location.origin).toString();
+    window.location.assign(target);
   };
 
   return (
