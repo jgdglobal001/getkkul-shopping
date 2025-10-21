@@ -33,7 +33,9 @@ export async function onRequest(context) {
       }
 
       let raw;
-      try { raw = JSON.parse(atob(m[1])); } catch { raw = null; }
+      try { raw = JSON.parse(atob(m[1])); } catch {
+        try { raw = JSON.parse(decodeURIComponent(escape(atob(m[1])))); } catch { raw = null; }
+      }
       if (!raw || !raw.user) {
         return new Response('null', {
           headers: {
@@ -50,7 +52,6 @@ export async function onRequest(context) {
       const user = {
         name: raw.user.name,
         email: raw.user.email,
-        image: raw.user.image,
         role: raw.user.role || 'user',
         id: raw.user.id,
       };

@@ -59,17 +59,9 @@ export default function UserProfile() {
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
       >
-        {session?.user?.image ? (
-          <img
-            src={session.user.image}
-            alt={session.user.name || "User"}
-            className="w-8 h-8 rounded-full border-2 border-gray-200"
-          />
-        ) : (
-          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-            <FaUser className="w-4 h-4 text-white" />
-          </div>
-        )}
+        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+          <FaUser className="w-4 h-4 text-white" />
+        </div>
         <div className="hidden md:block text-left">
           <p className="text-sm font-medium text-gray-700">
             {session?.user?.name?.split(" ")[0] || "User"}

@@ -61,7 +61,6 @@ export async function onRequest(context) {
         id: profile.id,
         name: profile.name || profile.nickname || 'Naver User',
         email: profile.email,
-        image: profile.profile_image,
       },
       issuedAt: Date.now(),
     };
@@ -75,7 +74,7 @@ export async function onRequest(context) {
         const nm = profile.name || profile.nickname || 'Naver User';
         const providerUserId = String(profile.id);
         const em = (profile.email || null) ?? `naver:${providerUserId}@noemail.local`;
-        const img = profile.profile_image || null;
+        const img = null;
         if (usersTbl[0]?.r) {
           let rows;
           try {
@@ -173,7 +172,10 @@ export async function onRequest(context) {
       // continue without failing auth
     }
 
-    const cookie = `app_session=${btoa(JSON.stringify(session))}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=1209600`;
+    const payload = JSON.stringify(session);
+    let encoded;
+    try { encoded = btoa(payload); } catch { encoded = btoa(unescape(encodeURIComponent(payload))); }
+    const cookie = `app_session=${encoded}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=1209600`;
 
     return new Response(null, {
       status: 302,

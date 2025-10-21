@@ -57,7 +57,6 @@ export async function onRequest(context) {
         id: String(profile.id),
         name,
         email,
-        image,
       },
       issuedAt: Date.now(),
     };
@@ -71,7 +70,7 @@ export async function onRequest(context) {
         const nm = name || 'Kakao User';
         const providerUserId = String(profile.id);
         const em = (email || null) ?? `kakao:${providerUserId}@noemail.local`;
-        const img = image || null;
+        const img = null;
         if (usersTbl[0]?.r) {
           let rows;
           try {
@@ -169,7 +168,10 @@ export async function onRequest(context) {
       // continue without failing auth
     }
 
-    const cookie = `app_session=${btoa(JSON.stringify(session))}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=1209600`;
+    const payload = JSON.stringify(session);
+    let encoded;
+    try { encoded = btoa(payload); } catch { encoded = btoa(unescape(encodeURIComponent(payload))); }
+    const cookie = `app_session=${encoded}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=1209600`;
 
     return new Response(null, {
       status: 302,

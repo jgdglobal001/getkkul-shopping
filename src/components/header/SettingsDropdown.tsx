@@ -134,17 +134,9 @@ const SettingsDropdown = () => {
           {/* User Info Header */}
           <div className="px-4 py-3 border-b border-gray-100">
             <div className="flex items-center gap-3">
-              {session?.user?.image ? (
-                <img
-                  src={session.user.image}
-                  alt={session?.user?.name || "Profile"}
-                  className="w-8 h-8 rounded-full object-cover"
-                />
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-theme-color/10 flex items-center justify-center">
-                  <FiUser className="text-theme-color text-sm" />
-                </div>
-              )}
+              <div className="w-8 h-8 rounded-full bg-theme-color/10 flex items-center justify-center">
+                <FiUser className="text-theme-color text-sm" />
+              </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">
                   {session?.user?.name || "User"}

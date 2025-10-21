@@ -137,69 +137,7 @@ export default function ProfileEditForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Profile Image Section */}
-      <div className="text-center">
-        <div className="relative inline-block">
-          {formData.image ? (
-            <img
-              src={formData.image}
-              alt="Profile"
-              className="w-[120px] h-[120px] rounded-full object-cover border-4 border-gray-200"
-            />
-          ) : (
-            <div className="w-[120px] h-[120px] bg-gray-300 rounded-full flex items-center justify-center">
-              <span className="text-gray-500 text-sm">No Image</span>
-            </div>
-          )}
-          {imageUploading && (
-            <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center">
-              <svg
-                className="animate-spin h-8 w-8 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                  className="opacity-25"
-                ></circle>
-                <path
-                  fill="currentColor"
-                  className="opacity-75"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-            </div>
-          )}
-        </div>
-
-        <div className="mt-4">
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleImageUpload}
-            accept="image/*"
-            className="hidden"
-          />
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={imageUploading}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 disabled:opacity-50 transition-colors"
-          >
-            {imageUploading ? "Uploading..." : "Change Picture"}
-          </button>
-          <p className="text-sm text-gray-500 mt-2">
-            JPG, GIF or PNG. Max size 5MB.
-          </p>
-          {errors.image && (
-            <p className="text-red-500 text-sm mt-1">{errors.image}</p>
-          )}
-        </div>
-      </div>
+      {/* Profile Image Section removed by requirement */}
 
       {/* Full Name */}
       <div>

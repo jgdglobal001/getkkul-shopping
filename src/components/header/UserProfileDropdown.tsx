@@ -26,8 +26,7 @@ const UserProfileDropdown = ({ user }: UserProfileDropdownProps) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const fallbackImage =
-    "https://res.cloudinary.com/dlbqw7atu/image/upload/v1747734054/userImage_dhytay.png";
+  // user image removed; show initial badge instead
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -131,12 +130,8 @@ const UserProfileDropdown = ({ user }: UserProfileDropdownProps) => {
         className="flex items-center gap-2 cursor-pointer group"
       >
         <Link href="/account" className="flex items-center">
-          <div className="border border-gray-500 w-10 h-10 rounded-full text-xl overflow-hidden">
-            <img
-              src={!user?.image ? fallbackImage : user.image}
-              alt={user?.name || "User"}
-              className="w-full h-full rounded-full object-cover"
-            />
+          <div className="border border-gray-500 w-10 h-10 rounded-full text-xl flex items-center justify-center bg-gray-100 text-gray-700">
+            {(user?.name?.[0] || 'U').toUpperCase()}
           </div>
         </Link>
         <div

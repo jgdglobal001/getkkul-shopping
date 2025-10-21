@@ -27,23 +27,8 @@ const AuthDebug = () => {
           <strong>Email:</strong> {session.user.email || "null"}
         </div>
         <div>
-          <strong>Image:</strong> {session.user.image || "null"}
-        </div>
-        <div>
           <strong>ID:</strong> {session.user.id || "null"}
         </div>
-        {session.user.image && (
-          <div className="mt-2">
-            <strong>Image Preview:</strong>
-            <img
-              src={session.user.image}
-              alt="Session user"
-              className="w-8 h-8 rounded-full mt-1"
-              onError={() => console.log("Session image failed to load")}
-              onLoad={() => console.log("Session image loaded successfully")}
-            />
-          </div>
-        )}
       </div>
       <div className="mt-2 text-xs opacity-70">
         Check console for image loading logs

@@ -146,19 +146,11 @@ export default function AccountClient() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
           <div className="flex items-center space-x-4 mb-4 md:mb-0">
             <div className="relative">
-              {session?.user?.image ? (
-                <img
-                  src={session.user.image}
-                  alt={session?.user?.name || "Profile"}
-                  className="w-20 h-20 rounded-full object-cover"
-                />
-              ) : (
-                <div className="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center">
-                  <span className="text-2xl font-semibold text-gray-600">
-                    {session?.user?.name?.charAt(0)?.toUpperCase() || "U"}
-                  </span>
-                </div>
-              )}
+              <div className="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center">
+                <span className="text-2xl font-semibold text-gray-600">
+                  {session?.user?.name?.charAt(0)?.toUpperCase() || "U"}
+                </span>
+              </div>
             </div>
             <div>
               <h2 className="text-2xl font-bold text-gray-900">

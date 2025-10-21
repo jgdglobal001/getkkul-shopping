@@ -52,7 +52,6 @@ export async function onRequest(context) {
         id: profile.sub,
         name: profile.name,
         email: profile.email,
-        image: profile.picture,
       },
       issuedAt: Date.now(),
     };
@@ -66,7 +65,7 @@ export async function onRequest(context) {
         const userTbl = await sql`SELECT to_regclass('public.user') as r`;
         const name = profile.name || 'Google User';
         const email = profile.email || null;
-        const image = profile.picture || null;
+        const image = null;
         if (usersTbl[0]?.r) {
           // App schema: public.users (UUID PK, email UNIQUE)
           let rows;
@@ -174,7 +173,10 @@ export async function onRequest(context) {
       // continue without failing auth
     }
 
-    const cookie = `app_session=${btoa(JSON.stringify(session))}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=1209600`; // 14 days
+    const payload = JSON.stringify(session);
+    let encoded;
+    try { encoded = btoa(payload); } catch { encoded = btoa(unescape(encodeURIComponent(payload))); }
+    const cookie = `app_session=${encoded}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=1209600`; // 14 days
 
     return new Response(null, {
       status: 302,
