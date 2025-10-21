@@ -1,7 +1,5 @@
 # Redirects for Cloudflare Pages
 
-# Ensure API functions are never rewritten
-/api/* /api/:splat 200
 
 # Favicon mapping
 /favicon.ico /getkkul-logo-fabicon.png 200
